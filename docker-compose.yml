@@ -1,0 +1,12 @@
+services:
+  kaleem-ledger:
+    build: .
+    container_name: kaleem-ledger
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DB_PATH=/data/ledger.db
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
