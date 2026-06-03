@@ -516,19 +516,19 @@
 
   async function apiGetState() {
     if (!authToken) throw new Error("Not authenticated");
-    const res = await apiFetch("/ledger/api/state", { method: "GET" });
+    const res = await apiFetch("/api/state", { method: "GET" });
     if (res.status === 204) return null;
     if (res.status === 401) {
       logOut();
       throw new Error("Session expired");
     }
-    if (!res.ok) throw new Error("GET /ledger/api/state failed");
+    if (!res.ok) throw new Error("GET /api/state failed");
     return await res.json();
   }
 
   async function apiPutState(stateObj) {
     if (!authToken) throw new Error("Not authenticated");
-    const res = await apiFetch("/ledger/api/state", {
+    const res = await apiFetch("/api/state", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(stateObj),
@@ -537,7 +537,7 @@
       logOut();
       throw new Error("Session expired");
     }
-    if (!res.ok) throw new Error("PUT /ledger/api/state failed");
+    if (!res.ok) throw new Error("PUT /api/state failed");
   }
 
   // Auth functions
@@ -565,7 +565,7 @@
   }
 
   async function apiLogin(username, password) {
-    const res = await fetch("/ledger/api/login", {
+    const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -585,7 +585,7 @@
   async function apiLogout() {
     if (!authToken) return;
     try {
-      await apiFetch("/ledger/api/logout", { method: "POST" });
+      await apiFetch("/api/logout", { method: "POST" });
     } catch (e) {
       // ignore errors on logout
     }
