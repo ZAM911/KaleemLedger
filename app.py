@@ -2,10 +2,16 @@ import json
 import os
 import sqlite3
 from pathlib import Path
+from functools import wraps
 
 from flask import Flask, abort, jsonify, request, send_from_directory
 
 APP_KEY = "myLedger.v1"
+
+# Hardcoded credentials
+ADMIN_USERNAME = "ad"
+ADMIN_PASSWORD = "a"
+ADMIN_TOKEN = "ledger_session_token_v1"
 
 ROOT_DIR = Path(__file__).resolve().parent
 
@@ -27,6 +33,7 @@ def _get_conn() -> sqlite3.Connection:
         )
         """
     )
+    conn.commit()
     return conn
 
 
@@ -61,23 +68,55 @@ def _save_state(state: dict) -> None:
 app = Flask(__name__)
 
 
-@app.get("/api/health")
-def health():
-    return jsonify({"ok": True})
+def _require_auth(f):
+    """Decorator to require authentication for API endpoints"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = request.headers.get("Authorization", "").replace("Bearer ", "")
+        if token != ADMIN_TOKEN:
+            return jsonify({"error": "Unauthorized"}), 401
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 @app.get("/api/state")
+@_require_auth
 def get_state():
     return jsonify(_load_state())
 
 
 @app.put("/api/state")
+@_require_auth
 def put_state():
     data = request.get_json(force=True, silent=False)
     if not isinstance(data, dict):
         return jsonify({"error": "state must be a JSON object"}), 400
     # keep it simple: accept whatever the frontend sends (it's one-user)
     _save_state(data)
+    return jsonify({"ok": True})
+
+
+@app.post("/api/login")
+def login():
+    """Authenticate user and return session token"""
+    data = request.get_json(force=True, silent=False)
+    username = data.get("username", "").strip()
+    password = data.get("password", "").strip()
+
+    if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+        return jsonify({"ok": True, "token": ADMIN_TOKEN})
+    else:
+        return jsonify({"error": "Invalid credentials"}), 401
+
+
+@app.post("/api/logout")
+def logout():
+    """Logout (no-op for hardcoded auth)"""
+    return jsonify({"ok": True})
+
+
+@app.get("/api/health")
+def health():
     return jsonify({"ok": True})
 
 

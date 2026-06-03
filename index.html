@@ -256,9 +256,78 @@
     opacity:0;pointer-events:none;transition:all .25s;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ---------- Login Page ---------- */
+  .login-container{
+    position:fixed;inset:0;z-index:100;background:var(--bg);
+    display:flex;align-items:center;justify-content:center;
+    opacity:1;pointer-events:auto;transition:opacity .3s;
+  }
+  .login-container.hidden{
+    opacity:0;pointer-events:none;
+  }
+  .login-box{
+    width:100%;max-width:320px;padding:40px 24px;
+  }
+  .login-title{
+    font-size:28px;font-weight:700;margin-bottom:8px;text-align:center;
+  }
+  .login-subtitle{
+    font-size:14px;color:var(--text-faint);text-align:center;margin-bottom:32px;
+  }
+  .login-error{
+    background:var(--red-soft);color:var(--red);padding:12px 14px;border-radius:10px;
+    font-size:13px;margin-bottom:16px;display:none;
+  }
+  .login-error.show{display:block;}
+  .login-field{
+    margin-bottom:16px;
+  }
+  .login-field label{
+    display:block;font-size:12.5px;font-weight:600;color:var(--text-dim);
+    margin-bottom:8px;letter-spacing:.2px;
+  }
+  .login-field input{
+    width:100%;padding:13px 14px;border-radius:12px;background:var(--surface);
+    border:1px solid var(--line);color:var(--text);outline:none;transition:border-color .15s;
+  }
+  .login-field input:focus{border-color:var(--accent);}
+  .login-field input::placeholder{color:var(--text-faint);}
+  .login-btn{
+    width:100%;padding:14px;border-radius:12px;background:var(--accent);color:#fff;
+    font-weight:700;font-size:15px;margin-top:24px;transition:opacity .15s;
+  }
+  .login-btn:active{opacity:.85;}
+  .login-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .login-hint{
+    font-size:12px;color:var(--text-faint);text-align:center;margin-top:20px;line-height:1.5;
+  }
 </style>
 </head>
 <body>
+
+<!-- Login Page -->
+<div class="login-container" id="loginContainer">
+  <div class="login-box">
+    <div class="login-title">My Ledger</div>
+    <div class="login-subtitle">Secure access to your finances</div>
+    <div class="login-error" id="loginError"></div>
+    <form id="loginForm">
+      <div class="login-field">
+        <label>Username</label>
+        <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username" required />
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password" required />
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">Login</button>
+    </form>
+    <div class="login-hint">
+      First time? Use any username & password to create your account.
+    </div>
+  </div>
+</div>
 
 <header class="topbar">
   <div class="topbar-row">
@@ -373,6 +442,7 @@
   <button class="btn-ghost" id="cancelSettingsBtn">Close</button>
   <button class="btn-ghost" id="exportBtn" style="color:var(--text-dim);">Export backup (copy data)</button>
   <button class="btn-ghost" id="importBtn" style="color:var(--text-dim);">Import backup (paste data)</button>
+  <button class="btn-ghost" id="logoutBtn" style="color:var(--red);margin-top:20px;">Logout</button>
 </div>
 
 <!-- Bank balance sheet -->
@@ -408,10 +478,12 @@
      If the backend is unreachable, we keep a small local backup so you
      don't lose data while the server is down. */
   const BACKUP_KEY = STORE_KEY + ".backup";
+  const AUTH_TOKEN_KEY = STORE_KEY + ".auth_token";
   const API_TIMEOUT_MS = 4000;
   let saveDebounceTimer = null;
   let pendingSaveJson = null;
   let warnedOffline = false;
+  let authToken = null;
 
   function backupGet() {
     try {
@@ -431,7 +503,11 @@
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), API_TIMEOUT_MS);
     try {
-      const res = await fetch(path, { ...options, signal: ctrl.signal });
+      const headers = { ...options.headers };
+      if (authToken) {
+        headers.Authorization = `Bearer ${authToken}`;
+      }
+      const res = await fetch(path, { ...options, headers, signal: ctrl.signal });
       return res;
     } finally {
       clearTimeout(timer);
@@ -439,19 +515,98 @@
   }
 
   async function apiGetState() {
+    if (!authToken) throw new Error("Not authenticated");
     const res = await apiFetch("/api/state", { method: "GET" });
     if (res.status === 204) return null;
+    if (res.status === 401) {
+      logOut();
+      throw new Error("Session expired");
+    }
     if (!res.ok) throw new Error("GET /api/state failed");
     return await res.json();
   }
 
   async function apiPutState(stateObj) {
+    if (!authToken) throw new Error("Not authenticated");
     const res = await apiFetch("/api/state", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(stateObj),
     });
+    if (res.status === 401) {
+      logOut();
+      throw new Error("Session expired");
+    }
     if (!res.ok) throw new Error("PUT /api/state failed");
+  }
+
+  // Auth functions
+  function saveAuthToken(token) {
+    authToken = token;
+    try {
+      if (window.localStorage) window.localStorage.setItem(AUTH_TOKEN_KEY, token);
+    } catch (e) {}
+  }
+
+  function loadAuthToken() {
+    try {
+      if (window.localStorage) {
+        authToken = window.localStorage.getItem(AUTH_TOKEN_KEY);
+      }
+    } catch (e) {}
+    return authToken;
+  }
+
+  function clearAuthToken() {
+    authToken = null;
+    try {
+      if (window.localStorage) window.localStorage.removeItem(AUTH_TOKEN_KEY);
+    } catch (e) {}
+  }
+
+  async function apiLogin(username, password) {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || "Login failed");
+    }
+    const data = await res.json();
+    if (data.token) {
+      saveAuthToken(data.token);
+      return true;
+    }
+    throw new Error("No token received");
+  }
+
+  async function apiLogout() {
+    if (!authToken) return;
+    try {
+      await apiFetch("/api/logout", { method: "POST" });
+    } catch (e) {
+      // ignore errors on logout
+    }
+    clearAuthToken();
+  }
+
+  function showLoginPage() {
+    $("loginContainer").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
+
+  function hideLoginPage() {
+    $("loginContainer").classList.add("hidden");
+    document.body.style.overflow = "";
+  }
+
+  function logOut() {
+    apiLogout().then(() => {
+      showLoginPage();
+      render(); // reset UI
+    });
   }
 
   // Currency catalog. order matters for the dropdown (PKR first).
@@ -907,6 +1062,13 @@
   // -- Settings sheet --
   $("settingsBtn").addEventListener("click", openSettings);
   $("cancelSettingsBtn").addEventListener("click", closeSheet);
+  $("logoutBtn").addEventListener("click", () => {
+    if (confirm("Log out of your account?")) {
+      logOut();
+      closeSheet();
+      toast("Logged out");
+    }
+  });
   function openSettings() {
     const baseSel = $("baseCurrencyInput");
     baseSel.innerHTML = CURRENCIES.map(
@@ -994,14 +1156,58 @@
   }
 
   // ---------- Boot ----------
-  render();
-
-  // Load persisted state from the backend (async), then re-render.
-  (async () => {
-    const loaded = await loadInitialState();
-    state = loaded;
+  // Load auth token and check if logged in
+  loadAuthToken();
+  
+  if (!authToken) {
+    showLoginPage();
+  } else {
+    hideLoginPage();
     render();
-  })();
+    // Load persisted state from the backend (async), then re-render.
+    (async () => {
+      try {
+        const loaded = await loadInitialState();
+        state = loaded;
+        render();
+      } catch (e) {
+        // If initial load fails, clear auth and show login
+        logOut();
+      }
+    })();
+  }
+
+  // Login form handler
+  $("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = $("loginUsername").value.trim();
+    const password = $("loginPassword").value.trim();
+    const errorDiv = $("loginError");
+    const loginBtn = $("loginBtn");
+
+    if (!username || !password) {
+      errorDiv.textContent = "Username and password required";
+      errorDiv.classList.add("show");
+      return;
+    }
+
+    errorDiv.classList.remove("show");
+    loginBtn.disabled = true;
+
+    try {
+      await apiLogin(username, password);
+      hideLoginPage();
+      state = await loadInitialState();
+      render();
+      toast("Welcome!");
+      $("loginForm").reset();
+    } catch (err) {
+      errorDiv.textContent = err.message || "Login failed";
+      errorDiv.classList.add("show");
+    } finally {
+      loginBtn.disabled = false;
+    }
+  });
 
   // Register service worker for offline use.
   if ("serviceWorker" in navigator) {
