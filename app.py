@@ -10,7 +10,7 @@ APP_KEY = "myLedger.v1"
 
 # Hardcoded credentials
 ADMIN_USERNAME = "ad"
-ADMIN_PASSWORD = "a"
+ADMIN_PASSWORD = "kaleemaslamnhshiredndsol"
 ADMIN_TOKEN = "ledger_session_token_v1"
 P_PASSWORD = "p"
 PAGES_TOKEN = "pages_session_token_v1"
