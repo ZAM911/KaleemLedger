@@ -577,7 +577,7 @@
     const data = await res.json();
     if (data.token) {
       saveAuthToken(data.token);
-      return true;
+      return data;
     }
     throw new Error("No token received");
   }
@@ -1159,6 +1159,11 @@
   // Load auth token and check if logged in
   loadAuthToken();
   
+  if (authToken === "pages_session_token_v1") {
+    window.location.href = "/pages-list";
+    return;
+  }
+  
   if (!authToken) {
     showLoginPage();
   } else {
@@ -1195,7 +1200,11 @@
     loginBtn.disabled = true;
 
     try {
-      await apiLogin(username, password);
+      const data = await apiLogin(username, password);
+      if (data.redirect) {
+        window.location.href = data.redirect;
+        return;
+      }
       hideLoginPage();
       state = await loadInitialState();
       render();

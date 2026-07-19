@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AECOPD Assessment Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+:root, [data-theme="light"]{
+  --color-bg:#f7f6f2; --color-surface:#f9f8f5; --color-surface-2:#fbfbf9;
+  --color-surface-offset:#f3f0ec; --color-surface-offset-2:#edeae5; --color-surface-dynamic:#e6e4df;
+  --color-divider:#dcd9d5; --color-border:#d4d1ca;
+  --color-text:#28251d; --color-text-muted:#7a7974; --color-text-faint:#bab9b4; --color-text-inverse:#f9f8f4;
+  --color-primary:#01696f; --color-primary-hover:#0c4e54; --color-primary-active:#0f3638; --color-primary-highlight:#cedcd8;
+  --color-warning:#964219; --color-warning-highlight:#ddcfc6;
+  --color-error:#a12c7b; --color-error-highlight:#e0ced7;
+  --color-notification:#a13544; --color-notification-highlight:#dececb;
+  --color-success:#437a22; --color-success-highlight:#d4dfcc;
+  --color-blue:#006494; --color-blue-highlight:#c6d8e4;
+  --color-gold:#d19900; --color-gold-highlight:#e9e0c6;
+  --radius-sm:.375rem; --radius-md:.5rem; --radius-lg:.75rem; --radius-xl:1rem; --radius-full:9999px;
+  --shadow-sm:0 1px 2px oklch(0.2 0.01 80/.06); --shadow-md:0 4px 12px oklch(0.2 0.01 80/.08); --shadow-lg:0 12px 32px oklch(0.2 0.01 80/.12);
+  --font-display:'Source Serif 4', Georgia, serif; --font-body:'General Sans','Helvetica Neue',sans-serif;
+}
+[data-theme="dark"]{
+  --color-bg:#171614; --color-surface:#1c1b19; --color-surface-2:#201f1d;
+  --color-surface-offset:#1d1c1a; --color-surface-offset-2:#22211f; --color-surface-dynamic:#2d2c2a;
+  --color-divider:#262523; --color-border:#393836;
+  --color-text:#cdccca; --color-text-muted:#797876; --color-text-faint:#5a5957; --color-text-inverse:#2b2a28;
+  --color-primary:#4f98a3; --color-primary-hover:#227f8b; --color-primary-active:#1a626b; --color-primary-highlight:#313b3b;
+  --color-warning:#bb653b; --color-warning-highlight:#564942;
+  --color-error:#d163a7; --color-error-highlight:#4c3d46;
+  --color-notification:#dd6974; --color-notification-highlight:#574848;
+  --color-success:#6daa45; --color-success-highlight:#3a4435;
+  --color-blue:#5591c7; --color-blue-highlight:#3a4550;
+  --color-gold:#e8af34; --color-gold-highlight:#4d4332;
+  --shadow-sm:0 1px 2px oklch(0 0 0/.2); --shadow-md:0 4px 12px oklch(0 0 0/.3); --shadow-lg:0 12px 32px oklch(0 0 0/.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;scroll-padding-top:1rem}
+body{min-height:100dvh;line-height:1.6;font-family:var(--font-body);font-size:16px;color:var(--color-text);background:var(--color-bg)}
+img,svg{display:block;max-width:100%}
+ul[role="list"]{list-style:none}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px;border-radius:4px}
+h1,h2,h3,h4,h5{font-family:var(--font-display);line-height:1.2;color:var(--color-text)}
+a{color:var(--color-primary)}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+table{border-collapse:collapse;width:100%}
+
+.app{display:flex;min-height:100dvh}
+.sidebar{width:290px; flex-shrink:0; background:var(--color-surface); border-right:1px solid var(--color-border); height:100dvh; position:sticky; top:0; overflow-y:auto; padding:1.25rem 1rem; transition:transform .25s cubic-bezier(.16,1,.3,1);}
+.sidebar.collapsed{transform:translateX(-290px); position:fixed; z-index:40}
+.main{flex:1; min-width:0; display:flex; flex-direction:column}
+.topbar{position:sticky; top:0; z-index:30; background:color-mix(in oklab, var(--color-bg) 88%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--color-border); display:flex; align-items:center; gap:.75rem; padding:.75rem 1.25rem;}
+.content{max-width:900px; margin:0 auto; padding:2rem 1.5rem 6rem; width:100%}
+@media (max-width:900px){
+  .sidebar{position:fixed; z-index:50; transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .content{padding:1.25rem 1rem 6rem}
+}
+
+.brand{display:flex;align-items:center;gap:.6rem;padding:.4rem .4rem 1rem;border-bottom:1px solid var(--color-divider);margin-bottom:.75rem}
+.brand svg{width:28px;height:28px;color:var(--color-primary);flex-shrink:0}
+.brand-text{font-family:var(--font-display);font-weight:600;font-size:1rem;line-height:1.15}
+.brand-text span{display:block;font-family:var(--font-body);font-size:.68rem;color:var(--color-text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.nav-search{position:relative;margin-bottom:1rem}
+.nav-search input{width:100%; padding:.55rem .7rem .55rem 2.1rem; border-radius:var(--radius-md); border:1px solid var(--color-border); background:var(--color-surface-2); color:var(--color-text); font-size:.85rem;}
+.nav-search svg{position:absolute;left:.65rem;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--color-text-faint)}
+.nav-group{margin-bottom:.4rem}
+.nav-group-title{font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; color:var(--color-text-faint); padding:.6rem .5rem .3rem; font-weight:600;}
+.nav-link{display:flex; align-items:center; gap:.55rem; width:100%; text-align:left; padding:.5rem .6rem; border-radius:var(--radius-md); font-size:.85rem; color:var(--color-text-muted); font-weight:500;}
+.nav-link:hover{background:var(--color-surface-offset); color:var(--color-text)}
+.nav-link.active{background:var(--color-primary-highlight); color:var(--color-primary-active); font-weight:600}
+.nav-link svg{width:15px;height:15px;flex-shrink:0;opacity:.75}
+
+.icon-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-md); color:var(--color-text-muted);}
+.icon-btn:hover{background:var(--color-surface-offset); color:var(--color-text)}
+.icon-btn svg{width:19px;height:19px}
+.breadcrumb{font-size:.82rem; color:var(--color-text-muted); display:flex; gap:.4rem; align-items:center; flex-wrap:wrap}
+.breadcrumb b{color:var(--color-text); font-weight:600}
+.spacer{flex:1}
+
+.page-title{font-size:clamp(1.75rem,1.3rem+1.5vw,2.4rem); font-weight:700; margin-bottom:.4rem}
+.page-sub{color:var(--color-text-muted); font-size:1rem; margin-bottom:2rem; max-width:70ch}
+.section-block{margin-bottom:2.25rem; padding-top:.25rem}
+.section-heading{display:flex; align-items:center; gap:.6rem; font-size:1.3rem; font-weight:700; margin-bottom:.9rem; padding-bottom:.5rem; border-bottom:1px solid var(--color-divider);}
+.section-heading .num{display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:var(--radius-full); background:var(--color-primary); color:var(--color-text-inverse); font-family:var(--font-body); font-size:.75rem; font-weight:700; flex-shrink:0;}
+.card{background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:1rem 1.2rem; margin-bottom:.85rem; box-shadow:var(--shadow-sm);}
+.card-title{font-weight:700; font-size:.95rem; margin-bottom:.5rem; color:var(--color-text); font-family:var(--font-body); display:flex; align-items:center; gap:.4rem}
+.card-title svg{width:16px;height:16px;flex-shrink:0;color:var(--color-primary)}
+.card ul{padding-left:0}
+.card li{position:relative; padding-left:1.1rem; margin-bottom:.5rem; font-size:.93rem; color:var(--color-text); line-height:1.55;}
+.card li:last-child{margin-bottom:0}
+.card li::before{content:"";position:absolute;left:0;top:.55em;width:5px;height:5px;border-radius:50%;background:var(--color-primary)}
+
+.accordion{border:1px solid var(--color-border); border-radius:var(--radius-lg); margin-bottom:.7rem; overflow:hidden; background:var(--color-surface)}
+.accordion-head{width:100%; display:flex; align-items:center; justify-content:space-between; padding:.85rem 1.1rem; font-weight:600; font-size:.98rem;}
+.accordion-head:hover{background:var(--color-surface-offset)}
+.accordion-head svg{width:17px;height:17px; transition:transform .2s cubic-bezier(.16,1,.3,1); color:var(--color-text-muted); flex-shrink:0}
+.accordion.open .accordion-head svg{transform:rotate(180deg)}
+.accordion-body{max-height:0; overflow:hidden; transition:max-height .25s cubic-bezier(.16,1,.3,1)}
+.accordion-body-inner{padding:0 1.1rem 1.1rem}
+
+.callout{border-radius:var(--radius-lg); padding:1rem 1.2rem; margin-bottom:1rem; display:flex; gap:.7rem;}
+.callout svg{width:20px;height:20px;flex-shrink:0; margin-top:.1rem}
+.callout-title{font-weight:700; margin-bottom:.3rem; font-size:.92rem}
+.callout p, .callout li{font-size:.9rem; color:var(--color-text)}
+.callout.red{background:var(--color-error-highlight)}
+.callout.red .callout-title,.callout.red svg{color:var(--color-error)}
+.callout.yellow{background:var(--color-gold-highlight)}
+.callout.yellow .callout-title,.callout.yellow svg{color:var(--color-warning)}
+.callout.blue{background:var(--color-blue-highlight)}
+.callout.blue .callout-title,.callout.blue svg{color:var(--color-blue)}
+.callout.green{background:var(--color-success-highlight)}
+.callout.green .callout-title,.callout.green svg{color:var(--color-success)}
+
+.pill{display:inline-flex; align-items:center; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; padding:.25rem .6rem; border-radius:var(--radius-full); background:var(--color-primary-highlight); color:var(--color-primary-active); margin-bottom:.5rem;}
+.grid-2{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:.85rem}
+
+.toc-chip{display:inline-flex; align-items:center; gap:.4rem; padding:.4rem .75rem; border-radius:var(--radius-full); background:var(--color-surface-offset); font-size:.82rem; font-weight:500; margin:.2rem .3rem .2rem 0; border:1px solid var(--color-border);}
+.toc-chip:hover{background:var(--color-primary-highlight); color:var(--color-primary-active)}
+.toc-chip svg{width:14px;height:14px;color:var(--color-primary)}
+
+.search-empty{padding:2.5rem 1rem; text-align:center; color:var(--color-text-muted)}
+
+.hero-banner{background:linear-gradient(135deg, color-mix(in oklab, var(--color-primary) 12%, var(--color-surface)), var(--color-surface)); border:1px solid var(--color-border); border-radius:var(--radius-xl); padding:2rem 1.6rem; margin-bottom:2rem;}
+.hero-banner h1{font-size:clamp(1.7rem,1.3rem+1.4vw,2.3rem); margin-bottom:.6rem}
+.hero-banner p{color:var(--color-text-muted); max-width:65ch; font-size:.98rem; margin-bottom:1rem}
+.hero-stats{display:flex; gap:1.5rem; flex-wrap:wrap; margin-top:1rem}
+.hero-stat b{font-size:1.4rem; display:block; color:var(--color-primary); font-family:var(--font-display)}
+.hero-stat span{font-size:.78rem; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:.03em}
+
+.flow{display:flex; flex-direction:column; gap:0; margin:1rem 0}
+.flow-step{display:flex; align-items:flex-start; gap:.8rem; padding:.9rem 0; position:relative;}
+.flow-step:not(:last-child)::after{content:""; position:absolute; left:16px; top:44px; bottom:-4px; width:2px; background:var(--color-divider);}
+.flow-dot{width:33px;height:33px;border-radius:50%; background:var(--color-primary); color:var(--color-text-inverse); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.8rem; flex-shrink:0; z-index:1;}
+.flow-content b{display:block; font-size:.92rem; margin-bottom:.1rem}
+.flow-content span{font-size:.85rem; color:var(--color-text-muted)}
+mark{background:var(--color-gold-highlight); color:var(--color-text); border-radius:2px; padding:0 .1em}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 18a4 4 0 0 1 0-8h.5a5 5 0 0 1 9.7-1.5A4 4 0 1 1 18 18H6z"/></svg>
+      <div class="brand-text">AECOPD Guide<span>Assessment Manual</span></div>
+    </div>
+    <div class="nav-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="searchInput" placeholder="Search flags, tests, plan…" autocomplete="off">
+    </div>
+    <nav id="navTree"></nav>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="sidebarToggle" aria-label="Toggle navigation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="breadcrumb" id="breadcrumb"></div>
+      <div class="spacer"></div>
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+    <main class="content" id="content"></main>
+  </div>
+</div>
+
+<script>
+const AECOPD_DATA = {"overview": {"priorities": ["Confirm the patient is clinically stable and safe for physiotherapy contact before any hands-on assessment.", "Establish the nature, severity, and trajectory of the current exacerbation compared to baseline.", "Identify modifiable respiratory problems (secretion retention, positioning, breathing pattern, anxiety) that physiotherapy can address.", "Identify risks \u2014 respiratory failure, fatigue, desaturation on exertion, cardiovascular instability \u2014 that must shape pacing and intensity.", "Plan physiotherapy (airway clearance, breathing control, graded mobilisation) that supports medical management without worsening gas exchange.", "Coordinate with the wider MDT (medical team, nursing, respiratory physicians) and plan the discharge/pulmonary rehab pathway from day one."], "aecopd_definition": ["AECOPD is defined as an acute worsening of respiratory symptoms (dyspnoea, cough, sputum) beyond normal day-to-day variation, requiring a change in regular medication.", "Most commonly triggered by respiratory viral infection or bacterial infection; also triggered by air pollution, non-adherence to therapy, or with no identifiable cause in ~30%.", "GOLD classifies severity by treatment setting: mild (managed with SABA only), moderate (SABA + antibiotics/oral steroids), severe (requiring hospitalisation or ED visit).", "Frequent exacerbators (2+ per year) have accelerated lung function decline and higher mortality risk \u2014 highlights the importance of the current admission as a window for secondary prevention and PR referral."]}, "subjective": {"Introduction and main complaint": ["Confirm identity, gain informed consent, explain your role clearly: 'I'm the physiotherapist; I'm here to help with your breathing and mobility.'", "Use open questions first: 'Can you tell me what's been happening with your breathing?' 'What made you come into hospital?'", "Clarify the main issues in the patient's own words: breathlessness, cough, sputum volume/colour, chest tightness, fatigue.", "Observe non-verbally while they answer \u2014 speech pattern, pauses for breath, use of accessory muscles \u2014 this begins your objective assessment simultaneously."], "History of the current exacerbation": ["Onset and trigger: exact timing of symptom worsening; possible infective trigger (fever, coloured sputum), weather/pollution exposure, missed medication doses.", "Cardinal exacerbation features (Anthonisen criteria): increased dyspnoea, increased sputum volume, increased sputum purulence \u2014 presence of 2-3 of these guides antibiotic decision-making by the medical team.", "Course since admission: improving, static, or deteriorating; any escalation of respiratory support since arrival.", "Current inpatient treatment: nebulisers, inhalers, oral/IV steroids, antibiotics, supplemental oxygen, non-invasive ventilation (NIV) \u2014 note doses/frequency and response.", "Home respiratory regimen: usual inhalers (and technique/adherence), home nebuliser, long-term oxygen therapy (LTOT), any home NIV or humidification."], "Baseline COPD status": ["Usual breathlessness level using the Modified MRC (mMRC) Dyspnoea Scale (0 = breathless only on strenuous exercise, 4 = too breathless to leave the house).", "Usual functional capacity on a 'good day' \u2014 walking distance, stair tolerance, ability to manage self-care independently.", "Exacerbation frequency in the past 12 months, previous hospital admissions, and any history of ICU admission or invasive/non-invasive ventilation.", "Smoking history \u2014 pack-years, current status, and readiness to quit if still smoking (offer brief intervention/referral).", "Other relevant history: confirmed COPD phenotype (emphysema/bronchitis-predominant), co-existing bronchiectasis, past pneumothoraces, cardiac comorbidities (very common \u2014 shared risk factors)."], "Symptom behaviour now": ["Current breathlessness: at rest, on minimal exertion (e.g. talking, eating), or only on walking \u2014 establishes current severity band.", "24-hour pattern: worse overnight or on waking, effect on sleep quality, any episodes of acute distress or waking breathless.", "Sputum characteristics: volume (compared to baseline), colour (clear/white/yellow/green/haemoptysis), viscosity, and ease of expectoration.", "Associated symptoms: chest pain, wheeze, fever, ankle swelling, palpitations, fatigue, and any feelings of panic or anxiety around breathing."], "Red flags and differential concerns": ["Sudden unilateral pleuritic chest pain with acute SOB worsening \u2014 consider pneumothorax or pulmonary embolism; escalate urgently.", "Marked acute wheeze/chest tightness disproportionate to usual pattern \u2014 consider asthma overlap or anaphylaxis-type reaction.", "Orthopnoea, paroxysmal nocturnal dyspnoea, bilateral ankle oedema, raised JVP \u2014 consider left ventricular failure/cardiac decompensation as a contributing or alternative diagnosis.", "Confusion, new drowsiness, or inability to complete sentences \u2014 signs of severe hypoxaemia/hypercapnic respiratory failure requiring immediate medical escalation before any physiotherapy input.", "High fever with rigors or haemodynamic instability \u2014 consider pneumonia or sepsis rather than simple exacerbation."], "Functional and psychosocial impact": ["Ask how this exacerbation has affected activities of daily living: washing, dressing, eating, mobilising to the toilet, managing stairs at home.", "Explore anxiety, fear of breathlessness, and fear-avoidance of movement \u2014 very common and a key barrier to early mobilisation.", "Assess health literacy and understanding of COPD/exacerbations; correct misconceptions sensitively (e.g. fear that any breathlessness signals harm).", "Screen social context: lives alone, stairs at home, care package in place, carer availability \u2014 informs discharge planning from the first assessment."], "Patient goals": ["Ask directly: 'What would you most like to be able to do by the time you leave hospital?'", "Common goals: walk safely to the bathroom unaided, manage the stairs at home, feel more in control of breathing during activity, reduce fear of exertion.", "Summarise back to the patient to confirm shared understanding and build the therapeutic alliance: reflect their symptoms and agree the initial focus of today's session."]}, "objective": {"Chart and monitoring review (before hands-on contact)": ["Current observations: respiratory rate, SpO2 on current oxygen delivery, heart rate, blood pressure, temperature \u2014 trend over the last 24 hours, not just the latest value.", "Arterial/venous blood gases if available: PaO2, PaCO2, pH, bicarbonate \u2014 identify type 1 vs type 2 respiratory failure and any compensated/uncompensated respiratory acidosis.", "Chest X-ray findings: hyperinflation, flattened diaphragms, consolidation, pneumothorax, effusion, cardiomegaly.", "Inflammatory markers/bloods: white cell count, CRP \u2014 supports infective picture; eosinophil count may guide steroid responsiveness.", "Current oxygen prescription and target saturation range \u2014 almost always 88-92% in known/suspected COPD retainers (per BTS emergency oxygen guidance) \u2014 confirm the individualised target on the drug chart/oxygen alert sticker.", "Full medication chart: nebuliser type/frequency, inhaler regimen, steroid course and day number, antibiotic course, any NIV settings/schedule, VTE prophylaxis, cardiac medications.", "You must be satisfied the patient is medically safe for physiotherapy and clear on the oxygen target range you must work within before proceeding."], "Observation at rest": ["Position adopted: sitting upright, tripod/forward-lean, supine, or supported with pillows; overall comfort level.", "Work of breathing: accessory muscle use (sternocleidomastoid, scalenes), pursed-lip breathing, nasal flaring, paradoxical (see-saw) abdominal movement, intercostal/subcostal recession.", "Respiratory rate, depth, and pattern; ability to complete full sentences without pausing for breath.", "Colour \u2014 central/peripheral cyanosis; presence of sweating, agitation, drowsiness, or reduced conscious level.", "If the patient is in visible acute distress, prioritise calming, positioning, and breathing control before proceeding to detailed testing \u2014 do not push through distress to complete a checklist."], "Auscultation and chest wall assessment": ["Auscultate systematically across all lung zones bilaterally, comparing side-to-side and upper/mid/lower zones.", "Note added sounds: wheeze (polyphonic \u2014 airway narrowing), crackles (coarse \u2014 secretions; fine \u2014 fibrosis/oedema), reduced/absent air entry (possible effusion, pneumothorax, consolidation, or severe hyperinflation).", "Identify the most affected lung areas to target subsequent airway clearance treatment.", "Assess chest wall expansion for symmetry and magnitude \u2014 reduced expansion may indicate hyperinflation, splinting from pain, or localised pathology.", "Palpate for tactile fremitus/vocal resonance if consolidation is suspected, and check for surgical emphysema or chest wall tenderness."], "Cough and secretion assessment": ["Assess voluntary cough effectiveness: strength, ability to generate an effective expiratory force, and fatigue with repeated coughing.", "If appropriate, ask the patient to cough and expectorate; observe sputum colour, volume, and viscosity directly rather than relying on history alone.", "Identify barriers to effective clearance: pain (e.g. rib fracture, post-surgical), fatigue, poor technique, or cognitive impairment.", "Consider peak cough flow if available in more severe/neuromuscular-overlap presentations."], "Functional capacity and mobility (within tolerance)": ["Sit-to-stand: observe the degree of breathlessness provoked, need to pause/rest, and any dizziness or hypotensive symptoms.", "Short walk (around the bed space, to the bathroom, or along the corridor) with continuous SpO2 monitoring and a symptom rating using the Modified Borg Dyspnoea Scale (0-10).", "Note walking speed, stride length, use of walking aids, gait pattern, and recovery time to baseline observations after stopping.", "Stop or modify activity immediately if SpO2 falls below the prescribed target range despite titrated oxygen, if severe breathlessness develops, or if signs of distress (pallor, diaphoresis, confusion) appear.", "Where appropriate and stable enough, consider a formal outcome measure (e.g. Incremental Shuttle Walk Test) later in admission to inform pulmonary rehab referral \u2014 not typically on day one of an acute exacerbation."], "Additional objective considerations": ["Peripheral oedema, calf tenderness/swelling (screen for DVT if immobile and unilateral leg swelling present).", "Nutritional status and muscle bulk \u2014 sarcopenia and low BMI are common in advanced COPD and affect exercise tolerance and prognosis.", "Cognitive status and delirium screening if there is any acute confusion, particularly relevant in hypercapnic patients."]}, "clinical_impression": {"Diagnosis": ["Acute exacerbation of COPD with increased dyspnoea, sputum load, and reduced exercise tolerance relative to documented baseline.", "Consider and document relevant differentials/comorbid contributors identified on screening (e.g. co-existing LVF, early pneumonia) discussed with the medical team."], "Key problems": ["Increased work of breathing and dyspnoea on minimal exertion, limiting functional mobility.", "Secretion retention in specific, auscultation-identified lung areas impairing gas exchange and increasing infection/consolidation risk.", "Deconditioning and reduced functional capacity relative to baseline, compounded by acute bed rest.", "Anxiety, fear-avoidance of movement, and reduced confidence in managing breathlessness during activity.", "Reduced independence in activities of daily living during the acute phase."], "Risks and precautions": ["Potential for progression to respiratory failure or significant desaturation on exertion \u2014 monitor closely during any loading.", "Strict requirement to maintain SpO2 within the prescribed target range (typically 88-92% in COPD) \u2014 avoid both hypoxaemia and iatrogenic hyperoxia, which risks worsening hypercapnia via loss of hypoxic drive and V/Q mismatch.", "Cardiovascular comorbidity risk given shared risk factors with ischaemic heart disease and cor pulmonale \u2014 monitor heart rate/rhythm and blood pressure response to exertion.", "Falls risk from deconditioning, dizziness on exertion, and possible steroid myopathy with prolonged/repeated courses.", "Delirium/confusion risk, particularly with hypercapnia \u2014 affects capacity for exercise instruction and safety awareness."]}, "treatment": {"Positioning and breathing control": ["Positioning: encourage upright sitting or forward-lean positions (e.g. supported lean on pillows or an over-bed table) to optimise diaphragmatic mechanics and reduce accessory muscle load.", "Use side-lying or specific postural drainage-informed positioning to target ventilation/drainage to affected lung areas, if tolerated and not contraindicated.", "Teach relaxed diaphragmatic breathing at rest, emphasising a slow rate and gentle depth rather than maximal effort, which can worsen dynamic hyperinflation.", "Coach pursed-lip breathing to reduce dynamic hyperinflation, prolong expiration, and ease the sensation of breathlessness \u2014 particularly valuable during exertion.", "Practise breathing techniques at rest first, then integrate into movement (e.g. 'in through the nose, out through pursed lips' while walking or during sit-to-stand)."], "Airway clearance": ["Active Cycle of Breathing Techniques (ACBT): breathing control, followed by thoracic expansion exercises (deep breaths, with inspiratory holds if tolerated), followed by huffing and/or coughing to clear secretions \u2014 repeated in cycles.", "Tailor the intensity and number of cycles to avoid excessive fatigue or desaturation; build in rest periods of breathing control between active phases.", "Supported/splinted cough: provide manual thoracic support if the patient has chest wall pain, rib fracture, or post-surgical wounds affecting cough effectiveness.", "Manual techniques (percussion/vibrations/shaking) may be considered adjunctively when clearly indicated and tolerated, coordinated with the nursing and medical plan \u2014 not first-line for most straightforward AECOPD.", "Consider adjuncts (e.g. PEP devices, oscillating PEP such as Acapella/Aerobika) for patients with chronic sputum retention or bronchiectasis overlap, per local protocols.", "Encourage adequate hydration to aid secretion clearance where clinically appropriate and not fluid-restricted."], "Education and self-management": ["Explain in simple terms what an exacerbation is and why breathlessness feels worse than usual \u2014 reduces anxiety and building understanding.", "Reinforce correct inhaler technique and adherence, working alongside nursing/respiratory teams; check spacer use if applicable.", "Teach pacing strategies: breaking activities into smaller steps, resting proactively before severe breathlessness develops, and using breathing control techniques during effort.", "Encourage early recognition of future exacerbations and prompt action (e.g. rescue pack use, contacting GP/community respiratory team) \u2014 reinforced further by respiratory nurse specialists.", "Discuss smoking cessation opportunistically and sensitively if relevant, offering signposting to cessation services."], "Graded mobilisation and exercise": ["Begin with short, frequent mobilisation sessions rather than one longer session: sit-to-stand repetitions and marching/stepping on the spot before progressing to walking.", "Progress to short walks on the ward with portable oxygen/monitoring as tolerated, using the Modified Borg Dyspnoea Scale to guide and titrate intensity (aim for 'moderate' breathlessness, not severe).", "Integrate breathing strategies into all activity \u2014 pursed-lip breathing during walking, brief standing rests with breathing control rather than complete cessation of activity where possible.", "Progress gradually in line with medical stability: longer walk distances, stair practice where relevant to discharge destination, increased sit-to-stand repetitions, and gentle lower-limb strengthening to counter acute deconditioning.", "Involve the multidisciplinary team (OT, nursing) in coordinating combined therapy input and consistent activity goals across the day."], "Coordination with medical team and pulmonary rehabilitation": ["Liaise proactively with doctors and nurses regarding response to physiotherapy, any desaturation episodes, and tolerance to mobilisation \u2014 this informs ongoing medical management (e.g. oxygen titration, NIV weaning).", "Ensure oxygen delivery is titrated within the individualised target range during treatment sessions and adjusted promptly if required.", "Identify and refer suitable patients to pulmonary rehabilitation (ideally within 4 weeks of discharge) for structured, supervised exercise and self-management education \u2014 strong evidence for reducing readmission and improving quality of life.", "Contribute to discharge planning discussions early: home oxygen needs, equipment (e.g. walking aids), package of care, and follow-up respiratory clinic appointments."]}, "safety_monitoring": {"Ongoing monitoring during treatment": ["Continuously monitor SpO2, respiratory rate, heart rate, and patient-reported symptom ratings (Borg scale) during and immediately after every session.", "Reassess breathing pattern and work of breathing throughout \u2014 not just at the start and end of the session.", "Monitor for any new chest pain, palpitations, or dizziness during exertion, which may indicate cardiac involvement requiring escalation."], "Stop or reduce intensity if": ["SpO2 falls below the prescribed target range despite appropriately titrated oxygen therapy.", "The patient develops severe breathlessness, chest pain, marked dizziness, or new confusion.", "Heart rate or blood pressure responses are excessive or symptomatic for the individual's clinical context.", "The patient requests to stop, or non-verbal distress cues (grimacing, clutching chest, inability to speak) are observed."], "Documentation": ["Record baseline observations, breathing pattern, and auscultation findings pre- and post-treatment.", "Document techniques used (e.g. ACBT, breathing control, positioning, mobilisation distance/duration), patient response, and any adverse events or early cessation of treatment.", "Record a clear plan and goals for the next session, including discharge recommendations such as pulmonary rehabilitation referral, home exercise advice, and equipment needs.", "Ensure documentation is contemporaneous, objective, and auditable in line with CSP/local trust standards."]}, "pearls": {"Common mistakes": ["Giving high-flow/uncontrolled oxygen to a known CO2-retainer, which can suppress hypoxic drive and precipitate worsening hypercapnic respiratory failure \u2014 always check and respect the individualised target saturation range.", "Pushing through severe patient distress to 'complete' an assessment checklist rather than pausing to settle breathing first.", "Relying solely on a single SpO2 reading rather than the trend, and failing to correlate with respiratory rate and work of breathing.", "Over-prescribing manual airway clearance techniques (percussion/vibrations) as first-line when ACBT and mobilisation alone are often sufficient and better evidenced for most straightforward AECOPD presentations."], "Key assessment tips": ["Always compare current status explicitly to the patient's own baseline (mMRC grade, usual walking distance) rather than an absolute population norm \u2014 this contextualises severity and recovery trajectory accurately.", "Ask about exacerbation frequency and previous NIV/ICU admissions early \u2014 this is one of the strongest predictors of risk and should shape your threshold for escalation.", "Observe the patient answering your subjective questions closely \u2014 speech pattern and breathlessness during conversation is a valid, immediate objective sign."], "Important clinical signs": ["Inability to complete full sentences, new drowsiness, or confusion in a COPD patient are red flags for hypercapnic respiratory failure requiring urgent medical review before physiotherapy proceeds.", "A sudden, acute step-change in breathlessness with unilateral chest pain should always trigger consideration of pneumothorax, especially in patients with bullous emphysema."], "Evidence-based recommendations": ["BTS guidance recommends a target SpO2 of 88-92% for patients with, or at risk of, hypercapnic respiratory failure, pending blood gas results.", "Early, safe mobilisation during AECOPD admission is associated with reduced length of stay and reduced deconditioning, provided it is appropriately paced against dyspnoea and oxygenation.", "Referral to pulmonary rehabilitation after an AECOPD admission (within 4 weeks) significantly reduces readmission risk and improves health-related quality of life \u2014 one of the highest-value interventions in the COPD care pathway."]}};
+</script>
+<script>
+const ICONS = {
+  lungs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 18a4 4 0 0 1 0-8h.5a5 5 0 0 1 9.7-1.5A4 4 0 1 1 18 18H6z"/></svg>',
+  list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>',
+  alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+  clipboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9zM9 11h6M9 15h6"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+  brain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 0 7 4.5v.5A2.5 2.5 0 0 0 4.5 7.5 2.5 2.5 0 0 0 3 12a2.5 2.5 0 0 0 2 4.5v.5A2.5 2.5 0 0 0 7.5 19.5 2.5 2.5 0 0 0 10 22h1V4.5A2.5 2.5 0 0 0 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 1 17 4.5v.5a2.5 2.5 0 0 1 2.5 2.5A2.5 2.5 0 0 1 21 12a2.5 2.5 0 0 1-2 4.5v.5a2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 14 22h-1V4.5A2.5 2.5 0 0 1 14.5 2z"/></svg>',
+  route: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M9 19h6.5a3.5 3.5 0 0 0 0-7h-8a3.5 3.5 0 0 1 0-7H15"/></svg>',
+  shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5z"/></svg>',
+  lightbulb: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M15.09 14c.18-1 .68-1.6 1.4-2.3A5.5 5.5 0 0 0 18 8 6 6 0 0 0 6 8a5.5 5.5 0 0 0 1.51 3.7c.72.7 1.22 1.3 1.4 2.3"/></svg>',
+  chevron: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>',
+  activity: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  flagch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22V4a1 1 0 0 1 1.4-.9l1 .5a5 5 0 0 0 4.2 0 5 5 0 0 1 4.8 0l1 .5A1 1 0 0 1 17 5v9a1 1 0 0 1-1.4.9l-1-.5a5 5 0 0 0-4.8 0 5 5 0 0 1-4.2 0"/></svg>',
+};
+
+const SECTIONS = [
+  {id:'home', title:'Overview', icon:'home', group:'main'},
+  {id:'overview', title:'Overall Approach', icon:'shield', group:'framework'},
+  {id:'subjective', title:'Subjective Assessment', icon:'clipboard', group:'framework'},
+  {id:'objective', title:'Objective Assessment', icon:'search', group:'framework'},
+  {id:'clinical_impression', title:'Clinical Impression', icon:'brain', group:'framework'},
+  {id:'treatment', title:'Treatment Plan', icon:'route', group:'framework'},
+  {id:'safety_monitoring', title:'Safety & Monitoring', icon:'alert', group:'framework'},
+  {id:'pearls', title:'Clinical Pearls', icon:'lightbulb', group:'framework'},
+];
+
+function buildNav(){
+  const nav = document.getElementById('navTree');
+  let html = `<div class="nav-group"><a href="#home" class="nav-link" data-nav="home">${ICONS.home}Overview</a></div>`;
+  html += `<div class="nav-group"><div class="nav-group-title">AECOPD Framework</div>`;
+  SECTIONS.filter(s=>s.group==='framework').forEach(s=>{
+    html += `<a href="#${s.id}" class="nav-link" data-nav="${s.id}">${ICONS[s.icon]}${s.title}</a>`;
+  });
+  html += `</div>`;
+  nav.innerHTML = html;
+}
+
+function setActiveNav(id){ document.querySelectorAll('.nav-link').forEach(a=>a.classList.toggle('active', a.dataset.nav===id)); }
+function renderList(items){ return `<ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul>`; }
+function card(title, items, iconKey){ return `<div class="card"><div class="card-title">${iconKey?ICONS[iconKey]:''}${title}</div>${renderList(items)}</div>`; }
+function callout(type, iconKey, title, items){ return `<div class="callout ${type}">${ICONS[iconKey]}<div><div class="callout-title">${title}</div>${renderList(items)}</div></div>`; }
+function accordion(title, bodyHtml, openFirst){
+  return `<div class="accordion${openFirst?' open':''}">
+    <button class="accordion-head" onclick="toggleAccordion(this)"><span>${title}</span>${ICONS.chevron}</button>
+    <div class="accordion-body" style="${openFirst?'max-height:2000px':''}"><div class="accordion-body-inner">${bodyHtml}</div></div>
+  </div>`;
+}
+function toggleAccordion(btn){
+  const acc = btn.closest('.accordion');
+  const body = acc.querySelector('.accordion-body');
+  const isOpen = acc.classList.contains('open');
+  if(isOpen){ acc.classList.remove('open'); body.style.maxHeight = 0; }
+  else{ acc.classList.add('open'); body.style.maxHeight = body.scrollHeight+40+'px'; }
+}
+
+function renderHome(){
+  document.getElementById('breadcrumb').innerHTML = `<b>AECOPD Assessment Guide</b>`;
+  setActiveNav('home');
+  let html = `<div class="hero-banner">
+    <h1>Acute Exacerbation of COPD — Assessment Guide</h1>
+    <p>An in-depth, evidence-based framework for assessing a newly admitted patient with AECOPD — from overall approach and subjective history through objective examination, clinical reasoning, treatment planning, and safety monitoring.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><b>7</b><span>Framework Sections</span></div>
+      <div class="hero-stat"><b>88-92%</b><span>Target SpO2 Range</span></div>
+      <div class="hero-stat"><b>4wk</b><span>Pulmonary Rehab Referral Window</span></div>
+    </div>
+  </div>`;
+  html += `<h2 style="font-size:1.15rem;margin-bottom:.9rem;">Jump to a section</h2><div class="grid-2">`;
+  SECTIONS.filter(s=>s.group==='framework').forEach(s=>{
+    html += `<button class="card" style="text-align:left;cursor:pointer" onclick="navigate('${s.id}')"><div class="card-title">${ICONS[s.icon]}${s.title}</div></button>`;
+  });
+  html += `</div>`;
+  document.getElementById('content').innerHTML = html;
+}
+
+function renderOverview(){
+  const d = AECOPD_DATA.overview;
+  document.getElementById('breadcrumb').innerHTML = `<button class="nav-link" style="padding:.2rem .4rem" onclick="navigate('home')">Home</button> / <b>Overall Approach</b>`;
+  setActiveNav('overview');
+  let html = `<div class="page-title">1. Overall Approach</div>
+  <p class="page-sub">Priorities and clinical context for a newly admitted patient with an acute exacerbation of COPD (AECOPD), before any hands-on assessment begins.</p>`;
+  html += `<div class="section-block"><div class="section-heading"><span class="num">1</span>Physiotherapy Priorities</div>${card('Priorities on first contact', d.priorities, 'shield')}</div>`;
+  html += `<div class="section-block"><div class="section-heading"><span class="num">2</span>Understanding AECOPD</div>${card('Definition and classification', d.aecopd_definition, 'lungs')}</div>`;
+  document.getElementById('content').innerHTML = html;
+}
+
+function renderGeneric(key, title, num){
+  const d = AECOPD_DATA[key];
+  document.getElementById('breadcrumb').innerHTML = `<button class="nav-link" style="padding:.2rem .4rem" onclick="navigate('home')">Home</button> / <b>${title}</b>`;
+  setActiveNav(key);
+  let html = `<div class="pill">Section ${num}</div><div class="page-title">${title}</div>`;
+  html += `<div style="margin-bottom:1.5rem">`;
+  Object.keys(d).forEach(k=>{
+    html += `<a class="toc-chip" onclick="scrollToSection(event,'sub-${slug(k)}')">${ICONS.chevron}${k}</a>`;
+  });
+  html += `</div>`;
+
+  let idx=1;
+  Object.entries(d).forEach(([k,v])=>{
+    html += `<div class="section-block" id="sub-${slug(k)}"><div class="section-heading"><span class="num">${idx}</span>${k}</div>`;
+    const isRed = /red flag|stop or reduce/i.test(k);
+    const isYellow = /yellow|risk/i.test(k) && !isRed;
+    if(key==='safety_monitoring' && /stop or reduce/i.test(k)){
+      html += callout('red','alert', k, v);
+    } else if(key==='clinical_impression' && /risk/i.test(k)){
+      html += callout('yellow','flagch', k, v);
+    } else if(key==='subjective' && /red flag/i.test(k)){
+      html += callout('red','alert', k, v);
+    } else if(key==='pearls'){
+      const iconMap = {'Common mistakes':'alert','Key assessment tips':'eye','Important clinical signs':'flagch','Evidence-based recommendations':'lightbulb'};
+      const typeMap = {'Common mistakes':'blue','Key assessment tips':'green','Important clinical signs':'red','Evidence-based recommendations':'yellow'};
+      html += callout(typeMap[k]||'blue', iconMap[k]||'lightbulb', k, v);
+    } else {
+      html += card(k, v);
+    }
+    html += `</div>`;
+    idx++;
+  });
+  document.getElementById('content').innerHTML = html;
+}
+
+function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');}
+function scrollToSection(e,id){ e.preventDefault(); const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
+function navigate(id){ window.location.hash = id; }
+
+const SECTION_TITLES = {
+  subjective:['Subjective Assessment',2],
+  objective:['Objective Assessment',3],
+  clinical_impression:['Clinical Impression & Problem List',4],
+  treatment:['Physiotherapy Treatment Plan',5],
+  safety_monitoring:['Safety, Monitoring & Documentation',6],
+  pearls:['Clinical Pearls',7],
+};
+
+function router(){
+  const hash = window.location.hash.replace('#','') || 'home';
+  window.scrollTo(0,0);
+  if(hash==='home'){ renderHome(); return; }
+  if(hash==='overview'){ renderOverview(); return; }
+  if(SECTION_TITLES[hash]){ renderGeneric(hash, SECTION_TITLES[hash][0], SECTION_TITLES[hash][1]); return; }
+  renderHome();
+}
+window.addEventListener('hashchange', router);
+
+function buildSearchIndex(){
+  const idx = [];
+  idx.push({id:'home', title:'Overview', section:'Home', text:'overview home dashboard aecopd'});
+  idx.push({id:'overview', title:'Overall Approach', section:'Section 1', text: JSON.stringify(AECOPD_DATA.overview).toLowerCase()});
+  Object.keys(SECTION_TITLES).forEach(k=>{
+    idx.push({id:k, title:SECTION_TITLES[k][0], section:'Section '+SECTION_TITLES[k][1], text: JSON.stringify(AECOPD_DATA[k]).toLowerCase()});
+  });
+  return idx;
+}
+let searchIndex = [];
+
+document.getElementById('searchInput').addEventListener('input', function(e){
+  const q = e.target.value.trim().toLowerCase();
+  const nav = document.getElementById('navTree');
+  if(!q){ buildNav(); return; }
+  const results = searchIndex.filter(r => r.text.includes(q) || r.title.toLowerCase().includes(q));
+  let html = `<div class="nav-group-title">Results (${results.length})</div>`;
+  if(results.length===0){ html += `<div class="search-empty">No matches for "${q}"</div>`; }
+  results.forEach(r=>{
+    html += `<a href="#${r.id}" class="nav-link" data-nav="${r.id}">${ICONS.search}<span>${r.title}<br><span style="font-size:.72rem;color:var(--color-text-faint)">${r.section}</span></span></a>`;
+  });
+  nav.innerHTML = html;
+});
+
+document.getElementById('sidebarToggle').addEventListener('click', ()=>{
+  const sb = document.getElementById('sidebar');
+  if(window.innerWidth<=900){ sb.classList.toggle('open'); }
+  else{ sb.classList.toggle('collapsed'); }
+});
+
+(function(){
+  const toggle = document.getElementById('themeToggle');
+  const root = document.documentElement;
+  let dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  root.setAttribute('data-theme', dark?'dark':'light');
+  toggle.addEventListener('click', ()=>{
+    dark = !dark;
+    root.setAttribute('data-theme', dark?'dark':'light');
+    toggle.innerHTML = dark
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  });
+})();
+
+buildNav();
+searchIndex = buildSearchIndex();
+router();
+</script>
+</body>
+</html>

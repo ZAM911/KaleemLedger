@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acute Stroke Assessment Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+:root, [data-theme="light"]{
+  --color-bg:#f7f6f2; --color-surface:#f9f8f5; --color-surface-2:#fbfbf9;
+  --color-surface-offset:#f3f0ec; --color-surface-offset-2:#edeae5; --color-surface-dynamic:#e6e4df;
+  --color-divider:#dcd9d5; --color-border:#d4d1ca;
+  --color-text:#28251d; --color-text-muted:#7a7974; --color-text-faint:#bab9b4; --color-text-inverse:#f9f8f4;
+  --color-primary:#01696f; --color-primary-hover:#0c4e54; --color-primary-active:#0f3638; --color-primary-highlight:#cedcd8;
+  --color-warning:#964219; --color-warning-highlight:#ddcfc6;
+  --color-error:#a12c7b; --color-error-highlight:#e0ced7;
+  --color-notification:#a13544; --color-notification-highlight:#dececb;
+  --color-success:#437a22; --color-success-highlight:#d4dfcc;
+  --color-blue:#006494; --color-blue-highlight:#c6d8e4;
+  --color-gold:#d19900; --color-gold-highlight:#e9e0c6;
+  --radius-sm:.375rem; --radius-md:.5rem; --radius-lg:.75rem; --radius-xl:1rem; --radius-full:9999px;
+  --shadow-sm:0 1px 2px oklch(0.2 0.01 80/.06); --shadow-md:0 4px 12px oklch(0.2 0.01 80/.08); --shadow-lg:0 12px 32px oklch(0.2 0.01 80/.12);
+  --font-display:'Source Serif 4', Georgia, serif; --font-body:'General Sans','Helvetica Neue',sans-serif;
+}
+[data-theme="dark"]{
+  --color-bg:#171614; --color-surface:#1c1b19; --color-surface-2:#201f1d;
+  --color-surface-offset:#1d1c1a; --color-surface-offset-2:#22211f; --color-surface-dynamic:#2d2c2a;
+  --color-divider:#262523; --color-border:#393836;
+  --color-text:#cdccca; --color-text-muted:#797876; --color-text-faint:#5a5957; --color-text-inverse:#2b2a28;
+  --color-primary:#4f98a3; --color-primary-hover:#227f8b; --color-primary-active:#1a626b; --color-primary-highlight:#313b3b;
+  --color-warning:#bb653b; --color-warning-highlight:#564942;
+  --color-error:#d163a7; --color-error-highlight:#4c3d46;
+  --color-notification:#dd6974; --color-notification-highlight:#574848;
+  --color-success:#6daa45; --color-success-highlight:#3a4435;
+  --color-blue:#5591c7; --color-blue-highlight:#3a4550;
+  --color-gold:#e8af34; --color-gold-highlight:#4d4332;
+  --shadow-sm:0 1px 2px oklch(0 0 0/.2); --shadow-md:0 4px 12px oklch(0 0 0/.3); --shadow-lg:0 12px 32px oklch(0 0 0/.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;scroll-padding-top:1rem}
+body{min-height:100dvh;line-height:1.6;font-family:var(--font-body);font-size:16px;color:var(--color-text);background:var(--color-bg)}
+img,svg{display:block;max-width:100%}
+ul[role="list"]{list-style:none}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px;border-radius:4px}
+h1,h2,h3,h4,h5{font-family:var(--font-display);line-height:1.2;color:var(--color-text)}
+a{color:var(--color-primary)}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+table{border-collapse:collapse;width:100%}
+
+.app{display:flex;min-height:100dvh}
+.sidebar{width:290px; flex-shrink:0; background:var(--color-surface); border-right:1px solid var(--color-border); height:100dvh; position:sticky; top:0; overflow-y:auto; padding:1.25rem 1rem; transition:transform .25s cubic-bezier(.16,1,.3,1);}
+.sidebar.collapsed{transform:translateX(-290px); position:fixed; z-index:40}
+.main{flex:1; min-width:0; display:flex; flex-direction:column}
+.topbar{position:sticky; top:0; z-index:30; background:color-mix(in oklab, var(--color-bg) 88%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--color-border); display:flex; align-items:center; gap:.75rem; padding:.75rem 1.25rem;}
+.content{max-width:900px; margin:0 auto; padding:2rem 1.5rem 6rem; width:100%}
+@media (max-width:900px){
+  .sidebar{position:fixed; z-index:50; transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .content{padding:1.25rem 1rem 6rem}
+}
+
+.brand{display:flex;align-items:center;gap:.6rem;padding:.4rem .4rem 1rem;border-bottom:1px solid var(--color-divider);margin-bottom:.75rem}
+.brand svg{width:28px;height:28px;color:var(--color-primary);flex-shrink:0}
+.brand-text{font-family:var(--font-display);font-weight:600;font-size:1rem;line-height:1.15}
+.brand-text span{display:block;font-family:var(--font-body);font-size:.68rem;color:var(--color-text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.nav-search{position:relative;margin-bottom:1rem}
+.nav-search input{width:100%; padding:.55rem .7rem .55rem 2.1rem; border-radius:var(--radius-md); border:1px solid var(--color-border); background:var(--color-surface-2); color:var(--color-text); font-size:.85rem;}
+.nav-search svg{position:absolute;left:.65rem;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--color-text-faint)}
+.nav-group{margin-bottom:.4rem}
+.nav-group-title{font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; color:var(--color-text-faint); padding:.6rem .5rem .3rem; font-weight:600;}
+.nav-link{display:flex; align-items:center; gap:.55rem; width:100%; text-align:left; padding:.5rem .6rem; border-radius:var(--radius-md); font-size:.85rem; color:var(--color-text-muted); font-weight:500;}
+.nav-link:hover{background:var(--color-surface-offset); color:var(--color-text)}
+.nav-link.active{background:var(--color-primary-highlight); color:var(--color-primary-active); font-weight:600}
+.nav-link svg{width:15px;height:15px;flex-shrink:0;opacity:.75}
+
+.icon-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-md); color:var(--color-text-muted);}
+.icon-btn:hover{background:var(--color-surface-offset); color:var(--color-text)}
+.icon-btn svg{width:19px;height:19px}
+.breadcrumb{font-size:.82rem; color:var(--color-text-muted); display:flex; gap:.4rem; align-items:center; flex-wrap:wrap}
+.breadcrumb b{color:var(--color-text); font-weight:600}
+.spacer{flex:1}
+
+.page-title{font-size:clamp(1.75rem,1.3rem+1.5vw,2.4rem); font-weight:700; margin-bottom:.4rem}
+.page-sub{color:var(--color-text-muted); font-size:1rem; margin-bottom:2rem; max-width:70ch}
+.section-block{margin-bottom:2.25rem; padding-top:.25rem}
+.section-heading{display:flex; align-items:center; gap:.6rem; font-size:1.3rem; font-weight:700; margin-bottom:.9rem; padding-bottom:.5rem; border-bottom:1px solid var(--color-divider);}
+.section-heading .num{display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:var(--radius-full); background:var(--color-primary); color:var(--color-text-inverse); font-family:var(--font-body); font-size:.75rem; font-weight:700; flex-shrink:0;}
+.card{background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:1rem 1.2rem; margin-bottom:.85rem; box-shadow:var(--shadow-sm);}
+.card-title{font-weight:700; font-size:.95rem; margin-bottom:.5rem; color:var(--color-text); font-family:var(--font-body); display:flex; align-items:center; gap:.4rem}
+.card-title svg{width:16px;height:16px;flex-shrink:0;color:var(--color-primary)}
+.card ul{padding-left:0}
+.card li{position:relative; padding-left:1.1rem; margin-bottom:.5rem; font-size:.93rem; color:var(--color-text); line-height:1.55;}
+.card li:last-child{margin-bottom:0}
+.card li::before{content:"";position:absolute;left:0;top:.55em;width:5px;height:5px;border-radius:50%;background:var(--color-primary)}
+
+.accordion{border:1px solid var(--color-border); border-radius:var(--radius-lg); margin-bottom:.7rem; overflow:hidden; background:var(--color-surface)}
+.accordion-head{width:100%; display:flex; align-items:center; justify-content:space-between; padding:.85rem 1.1rem; font-weight:600; font-size:.98rem;}
+.accordion-head:hover{background:var(--color-surface-offset)}
+.accordion-head svg{width:17px;height:17px; transition:transform .2s cubic-bezier(.16,1,.3,1); color:var(--color-text-muted); flex-shrink:0}
+.accordion.open .accordion-head svg{transform:rotate(180deg)}
+.accordion-body{max-height:0; overflow:hidden; transition:max-height .25s cubic-bezier(.16,1,.3,1)}
+.accordion-body-inner{padding:0 1.1rem 1.1rem}
+
+.callout{border-radius:var(--radius-lg); padding:1rem 1.2rem; margin-bottom:1rem; display:flex; gap:.7rem;}
+.callout svg{width:20px;height:20px;flex-shrink:0; margin-top:.1rem}
+.callout-title{font-weight:700; margin-bottom:.3rem; font-size:.92rem}
+.callout p, .callout li{font-size:.9rem; color:var(--color-text)}
+.callout.red{background:var(--color-error-highlight)}
+.callout.red .callout-title,.callout.red svg{color:var(--color-error)}
+.callout.yellow{background:var(--color-gold-highlight)}
+.callout.yellow .callout-title,.callout.yellow svg{color:var(--color-warning)}
+.callout.blue{background:var(--color-blue-highlight)}
+.callout.blue .callout-title,.callout.blue svg{color:var(--color-blue)}
+.callout.green{background:var(--color-success-highlight)}
+.callout.green .callout-title,.callout.green svg{color:var(--color-success)}
+
+.pill{display:inline-flex; align-items:center; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; padding:.25rem .6rem; border-radius:var(--radius-full); background:var(--color-primary-highlight); color:var(--color-primary-active); margin-bottom:.5rem;}
+.grid-2{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:.85rem}
+
+.toc-chip{display:inline-flex; align-items:center; gap:.4rem; padding:.4rem .75rem; border-radius:var(--radius-full); background:var(--color-surface-offset); font-size:.82rem; font-weight:500; margin:.2rem .3rem .2rem 0; border:1px solid var(--color-border);}
+.toc-chip:hover{background:var(--color-primary-highlight); color:var(--color-primary-active)}
+.toc-chip svg{width:14px;height:14px;color:var(--color-primary)}
+
+.search-empty{padding:2.5rem 1rem; text-align:center; color:var(--color-text-muted)}
+
+.hero-banner{background:linear-gradient(135deg, color-mix(in oklab, var(--color-primary) 12%, var(--color-surface)), var(--color-surface)); border:1px solid var(--color-border); border-radius:var(--radius-xl); padding:2rem 1.6rem; margin-bottom:2rem;}
+.hero-banner h1{font-size:clamp(1.7rem,1.3rem+1.4vw,2.3rem); margin-bottom:.6rem}
+.hero-banner p{color:var(--color-text-muted); max-width:65ch; font-size:.98rem; margin-bottom:1rem}
+.hero-stats{display:flex; gap:1.5rem; flex-wrap:wrap; margin-top:1rem}
+.hero-stat b{font-size:1.4rem; display:block; color:var(--color-primary); font-family:var(--font-display)}
+.hero-stat span{font-size:.78rem; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:.03em}
+
+.flow{display:flex; flex-direction:column; gap:0; margin:1rem 0}
+.flow-step{display:flex; align-items:flex-start; gap:.8rem; padding:.9rem 0; position:relative;}
+.flow-step:not(:last-child)::after{content:""; position:absolute; left:16px; top:44px; bottom:-4px; width:2px; background:var(--color-divider);}
+.flow-dot{width:33px;height:33px;border-radius:50%; background:var(--color-primary); color:var(--color-text-inverse); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.8rem; flex-shrink:0; z-index:1;}
+.flow-content b{display:block; font-size:.92rem; margin-bottom:.1rem}
+.flow-content span{font-size:.85rem; color:var(--color-text-muted)}
+mark{background:var(--color-gold-highlight); color:var(--color-text); border-radius:2px; padding:0 .1em}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 18a4 4 0 0 1 0-8h.5a5 5 0 0 1 9.7-1.5A4 4 0 1 1 18 18H6z"/></svg>
+      <div class="brand-text">Stroke Guide<span>Acute Ward Manual</span></div>
+    </div>
+    <div class="nav-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="searchInput" placeholder="Search signs, tests, plan…" autocomplete="off">
+    </div>
+    <nav id="navTree"></nav>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="sidebarToggle" aria-label="Toggle navigation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="breadcrumb" id="breadcrumb"></div>
+      <div class="spacer"></div>
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+    <main class="content" id="content"></main>
+  </div>
+</div>
+
+<script>
+const STROKE_DATA = {"overview": {"priorities": ["Confirm medical stability and gather key stroke details (type, vascular territory, side affected, timing since onset).", "Perform a structured assessment of movement, function, communication, cognition, and risk \u2014 not an isolated motor exam.", "Identify immediate rehabilitation needs and safety issues: aspiration risk, falls risk, pressure areas, and manual-handling requirements.", "Begin goal-directed treatment early and liaise closely with the wider multidisciplinary team (nursing, medicine, OT, SLT, dietetics)."], "stroke_context": ["Ischaemic stroke (~85% of strokes) results from arterial occlusion (thrombotic or embolic); haemorrhagic stroke (~15%) results from vessel rupture (intracerebral or subarachnoid) and carries different precautions.", "Vascular territory determines the clinical syndrome: MCA (most common) causes contralateral face/arm-predominant weakness +/- aphasia (dominant hemisphere) or neglect (non-dominant); ACA causes leg-predominant weakness; PCA causes visual field deficits; posterior circulation/brainstem strokes cause crossed signs, ataxia, and vertigo.", "Time since onset is critical: within the hyperacute window (thrombolysis up to 4.5h, thrombectomy up to 24h in selected cases) different monitoring and BP precautions apply post-intervention.", "Early mobilisation (within 24-48h) is recommended when medically stable, but very early, high-dose, out-of-bed mobilisation within the first 24 hours (AVERT trial protocol) has been shown to reduce favourable outcomes \u2014 mobilisation should be frequent, short-duration, and clinically judged, not maximal from day one."]}, "pre_assessment": {"Medical notes review": ["Stroke type: ischaemic vs haemorrhagic \u2014 determines relevant precautions (e.g. anticoagulation status, BP targets).", "Vascular territory and side affected \u2014 anticipate the likely pattern of impairment before you even see the patient.", "Time since onset, and whether thrombolysis (IV alteplase/tenecteplase) or mechanical thrombectomy was performed, or any neurosurgical intervention (e.g. decompressive craniectomy, EVD).", "Any documented restrictions: blood pressure parameters, intracranial pressure (ICP) precautions, bed rest orders, positioning restrictions post-thrombectomy (e.g. groin puncture site precautions)."], "Current status check": ["Vital signs and neurological observations \u2014 NIHSS score or local neuro-obs tool, Glasgow Coma Scale (GCS), blood glucose (hypo/hyperglycaemia mimics and worsens stroke symptoms).", "Swallow screen result and current NPO (nil by mouth) status \u2014 directly affects medication routes and aspiration risk during any upright/seated work.", "Lines, monitoring, and any devices in situ: IV access, cardiac monitoring, arterial lines, catheters \u2014 plan handling around these.", "Confirm explicitly with nursing/medical staff that the patient is safe for physiotherapy: haemodynamically stable, no acute neurological deterioration, no immediate neurosurgical concerns."]}, "subjective": {"Introduction and basic history": ["Introduce yourself, confirm identity, and gain consent using simple, clear language \u2014 be alert to aphasia, dysarthria, or cognitive impairment affecting comprehension.", "If the patient cannot give a full history due to communication or cognitive deficits, seek corroborating information from relatives, carers, or the medical/nursing notes.", "Key opening questions: 'What happened, from your point of view?' (explore timing and nature of symptom onset \u2014 weakness, speech change, vision change, balance loss).", "Ask: 'What were you able to do before this happened?' to establish baseline mobility, ADLs, work/hobbies, and home situation.", "Explore current main concerns directly: fear of falling, frustration about speech difficulty, pain, or shoulder discomfort."], "Functional and social baseline": ["Pre-stroke mobility status: fully independent, uses a stick/frame, indoor-only mobiliser, stair user or non-user.", "Pre-stroke activities of daily living: washing, dressing, toileting, cooking, community access, driving.", "Living situation: house vs flat, presence of stairs, bathroom/toilet setup, who else lives at home, existing care package or support network \u2014 this shapes realistic discharge goal-setting from day one."], "Current symptoms and impact": ["Weakness or heaviness on one side, numbness, incoordination, visual disturbance (e.g. visual field loss, double vision, neglect), speech and language difficulties.", "Fatigue (very common and often underestimated post-stroke), headache, spasticity or stiffness, shoulder pain on the affected side.", "Emotional impact: screen gently for fear, low mood, or frustration \u2014 emotional lability and early post-stroke depression are common and affect engagement with rehab."], "Red flags and precautions": ["Sudden worsening of symptoms, decreasing consciousness level, severe new headache, or vomiting \u2014 may indicate haemorrhagic transformation, re-bleed, or raised ICP; stop and escalate immediately.", "New chest pain, severe breathlessness, or arrhythmia \u2014 cardiac complications (e.g. AF, MI) are common post-stroke and can co-present or be causative.", "Recent thrombolysis: be aware of specific blood pressure parameters and positioning precautions in the post-thrombolysis window (typically first 24 hours) \u2014 avoid any activity that could provoke a BP spike or bleeding risk.", "Post-thrombectomy groin/access site precautions \u2014 check local protocol on hip flexion/sitting restrictions before mobilising.", "If any of the above emerge during your assessment, pause immediately and liaise urgently with the medical team before proceeding."]}, "objective": {"Observation and general status": ["Position in bed: posture, limb positioning, use of pillows or splints, and whether the affected side is being protected or neglected.", "Level of alertness and ability to attend to and follow simple commands \u2014 gives an immediate cognitive/conscious level screen.", "Facial symmetry and presence of droop; screen for visual/spatial neglect or inattention (e.g. patient consistently ignoring objects, people, or their own limb on the affected side)."], "Motor function": ["Systematically compare the affected side against the unaffected side rather than assessing in isolation.", "Tone: flaccid, normal, or increased \u2014 identify emerging spasticity patterns (e.g. flexor pattern in the upper limb, extensor pattern in the lower limb).", "Strength: manual muscle testing where safe to do so \u2014 shoulder flexion/abduction, elbow flexion/extension, hip/knee/ankle movements bilaterally.", "Movement quality: presence of synergy patterns, associated reactions, and control/speed of voluntary movement \u2014 not just whether movement is present.", "Characterise hemiparesis distribution (face, arm, leg \u2014 all three, or a partial pattern) and screen for limb or gait ataxia suggesting a cerebellar/posterior circulation component."], "Sensation and proprioception": ["Gross sensory testing: light touch and pin-prick sensation, compared side-to-side.", "Joint position sense at the toes and fingers where feasible \u2014 proprioceptive loss significantly increases falls risk and affects motor relearning.", "Note any hemisensory loss and distinguish this from sensory neglect (where sensation is intact but the patient fails to attend to stimuli on the affected side)."], "Coordination": ["Finger-to-nose and heel-to-shin testing on the less-affected side; use adapted or simplified tasks on the affected side if strength/sensation allow.", "Observe specifically for cerebellar signs: dysmetria (overshooting), intention tremor, and ataxic movement patterns, which point toward posterior circulation involvement."], "Balance and postural control": ["Sitting balance on the edge of the bed: ability to maintain a midline position, level of support required, and presence of pushing behaviour (contraversive/ipsilateral pushing syndrome).", "Assess righting reactions and response to small manual perturbations in sitting.", "Standing balance, only if judged safe: begin with two-person assist, note weight-bearing capacity through the affected leg, postural alignment, and need for aids.", "Observe for fear/anxiety, knee buckling, or ankle instability during any standing trial."], "Functional mobility": ["Bed mobility: rolling, bridging, and moving from supine to sitting \u2014 note the level of physical assistance required and the strategies the patient uses.", "Transfers: sit-to-stand, bed-to-chair, and toilet transfers if appropriate \u2014 this identifies specific manual-handling needs and quantifies falls risk for the ward team.", "Gait, if judged safe to trial: short walk with appropriate support, noting step length, foot clearance, stance time, knee control, and use of walking aids.", "Use validated functional outcome measures where available locally \u2014 e.g. Modified Rankin Scale, Berg Balance Scale, Trunk Control Test, or a local stroke-specific mobility measure \u2014 to enable objective tracking of progress."], "Upper limb function and neglect": ["Assess the ability to reach, grasp, and release objects using the affected arm/hand.", "Screen for apraxia (impaired ability to perform learned motor tasks despite intact strength) and for visuospatial neglect or learned non-use.", "Observe whether the patient spontaneously attends to and attempts to use the affected limb during functional tasks, or consistently avoids/ignores it."], "Communication and cognition (basic screen)": ["This is a screening-level assessment \u2014 detailed evaluation sits with Speech and Language Therapy (SLT) and Occupational Therapy (OT), but physiotherapists need a working picture to communicate safely and set appropriate goals.", "Aphasia screen: can the patient understand simple one- and two-step commands? Can they name common objects, form sentences, or repeat phrases back?", "Dysarthria screen: assess clarity and intelligibility of speech and articulation.", "Cognition: orientation to person, place, and time; attention span; ability to follow multi-step instructions; insight into their own deficits and safety awareness (critical for falls risk stratification)."], "Swallow and respiratory status (brief screen)": ["Confirm the documented swallow screen result and current NPO status before any oral intake-related activity.", "Observe cough effectiveness and voice quality (clear vs 'wet'-sounding voice, which may suggest silent aspiration) and basic breathing pattern.", "Identify whether respiratory physiotherapy input is needed \u2014 e.g. weak cough, reduced mobility increasing atelectasis risk, or pre-existing respiratory comorbidity."], "Skin integrity and positioning risk": ["Check pressure areas at highest risk: sacrum, heels, and the affected shoulder, particularly in patients with severely reduced mobility or sensory loss.", "Assess the need for a formal positioning regime, pressure-relieving equipment, and repositioning schedule, and communicate this clearly to the nursing team."]}, "clinical_impression": {"Stroke profile": ["Summarise in clinical shorthand, e.g. 'Left MCA infarct with right-sided hemiparesis, expressive aphasia, and mild sensory impairment' \u2014 this framing communicates efficiently within the MDT."], "Key impairments": ["Motor weakness and abnormal tone on the affected side, with an emerging pattern (e.g. synergy, spasticity) that will guide handling and positioning advice.", "Impaired balance and transfers, translating into a high falls and manual-handling risk requiring explicit ward-level communication.", "Communication difficulties (aphasia and/or dysarthria) that must shape how all future assessment and instruction is delivered.", "Possible neglect, apraxia, or reduced insight into deficits \u2014 significant safety implications beyond the purely physical impairments."], "Activity limitations": ["Bed mobility, sitting balance, standing tolerance, and walking are all affected to varying degrees and should each be explicitly graded.", "Activities of daily living \u2014 washing, dressing, toileting \u2014 are likely to require increased support in the acute phase; document current level clearly for the MDT and family."], "Participation and contextual factors": ["Home environment (stairs, bathroom access), existing support network, work and social roles, and the patient's own stated priorities all shape realistic, meaningful goal-setting.", "Family/carer involvement in goal-setting from the earliest stage improves engagement and supports realistic discharge planning."], "Risks and precautions": ["Aspiration risk if swallow screen is failed or pending \u2014 coordinate closely with SLT and nursing before any oral intake.", "Falls risk from impaired balance, sensory loss, neglect, or reduced insight \u2014 requires explicit handling plan and appropriate supervision level.", "Shoulder injury/subluxation risk in a flaccid or weak upper limb \u2014 requires careful handling, positioning, and possibly supportive equipment.", "Fatigue \u2014 a major but often under-recognised limiting factor on session length and intensity in the acute phase.", "Blood pressure and intracranial pressure considerations, particularly post-thrombolysis, post-thrombectomy, or post-neurosurgical intervention \u2014 always check current parameters before mobilising."]}, "treatment": {"Positioning and early mobilisation": ["Implement safe, frequent repositioning to protect skin integrity, optimise respiratory function, and manage tone.", "Support early sitting out of bed and early standing (once medically stable and cleared) to improve function and help prevent complications of immobility (chest infection, DVT, deconditioning, contractures).", "Balance the evidence for early mobilisation against caution around very early, high-intensity out-of-bed activity in the first 24 hours \u2014 favour frequent, short-duration sessions guided by clinical judgement and tolerance rather than maximal single sessions."], "Task-specific mobility training": ["Progress bed mobility, transfers, and gait training using task-specific practice relevant to the patient's own goals and home environment.", "Select appropriate handling techniques and walking aids based on the motor and sensory pattern identified \u2014 avoid generic 'one-size-fits-all' handling.", "Grade practice intensity and repetition according to fatigue levels and cognitive tolerance, building volume progressively as the patient stabilises."], "Upper limb protection and facilitation": ["Protect the affected upper limb from injury and subluxation through careful positioning, handling, and use of supportive equipment (e.g. arm troughs, slings where appropriate per local protocol).", "Facilitate active use and attention to the affected limb during functional tasks to counter learned non-use and support neuroplastic recovery.", "Monitor for and address emerging shoulder pain early, as post-stroke shoulder pain is common and can significantly limit rehabilitation progress if unaddressed."], "MDT communication and goal-setting": ["Communicate clearly and promptly with nursing, OT, SLT, and medical staff about identified risks, handling requirements, and agreed rehabilitation goals.", "Involve family and carers in realistic, collaborative goal-setting from the earliest appropriate point \u2014 this improves engagement and supports smoother discharge planning.", "Document and share a clear, consistent handling and mobility plan accessible to all staff involved in the patient's care to ensure safety and continuity across shifts."]}, "safety_monitoring": {"Ongoing monitoring during treatment": ["Monitor conscious level, neurological status, and vital signs (including blood pressure where relevant) before, during, and after any physiotherapy session.", "Reassess tone, movement quality, and fatigue levels continuously \u2014 acute stroke patients can change status rapidly, and today's baseline may not hold tomorrow.", "Watch closely for signs of aspiration during any upright work or oral care coordination, and for early signs of shoulder discomfort during handling."], "Stop or escalate immediately if": ["Any sudden deterioration in conscious level, new severe headache, vomiting, or worsening focal neurological signs occurs \u2014 treat as a possible extension/re-bleed and escalate urgently to the medical team.", "The patient develops chest pain, marked breathlessness, or a new arrhythmia during treatment.", "Blood pressure moves outside the documented safe parameters, particularly in the post-thrombolysis or post-thrombectomy window.", "Signs of aspiration (coughing, choking, wet voice) occur during any activity involving oral intake or upright positioning work."], "Documentation": ["Record neurological observations, motor/sensory findings, and functional status (bed mobility, transfers, sitting/standing balance) at each assessment.", "Document specific handling requirements, equipment used, and the patient's response to treatment, including any adverse events.", "Record a clear plan for the next session and communicate updated risk status (falls, aspiration, skin integrity) to the wider team via the notes and verbal handover.", "Ensure all documentation is contemporaneous and meets CSP/local trust standards for medico-legal and audit purposes."]}, "pearls": {"Common mistakes": ["Assessing motor function in isolation without also screening cognition, communication, and neglect \u2014 this misses safety-critical information that changes how the whole assessment should be conducted.", "Pushing for a maximal single mobilisation session on day one rather than using frequent, shorter sessions \u2014 evidence (AVERT trial) suggests very early, high-dose activity can worsen outcomes.", "Failing to check swallow screen status before positioning a patient upright for extended periods around meal times, or before starting oral-motor related work.", "Overlooking shoulder positioning and handling technique early on, allowing preventable subluxation or pain to develop and subsequently limit rehab progress."], "Key assessment tips": ["Always establish baseline function before the stroke (mobility, ADLs, home setup) \u2014 this is essential context for realistic goal-setting and for judging the true extent of new impairment.", "Use simple, clear language and check understanding explicitly when aphasia or cognitive impairment is suspected \u2014 do not assume comprehension based on the ability to nod or make eye contact.", "Actively look for neglect during your assessment (e.g. does the patient turn toward you if you approach from the affected side?) rather than relying only on formal testing."], "Important clinical signs": ["Sudden deterioration in conscious level, severe new headache, or vomiting in the acute phase are red flags for haemorrhagic transformation or raised ICP and require immediate medical escalation.", "A 'wet' or gurgly voice quality after swallowing, or a weak/absent voluntary cough, are important indirect signs of aspiration risk that should prompt urgent liaison with SLT and nursing.", "Pushing behaviour (active pushing toward the affected side, contrary to typical expectations) is a distinct and important postural control abnormality requiring specific management strategies, not simply more balance practice."], "Evidence-based recommendations": ["National stroke guidelines recommend a structured, multidisciplinary early assessment within 24 hours of admission covering swallow, motor function, communication, cognition, and mood.", "Early supported mobilisation is beneficial for outcomes but should be frequent and of short duration in the initial 24-48 hours rather than a single prolonged session, per AVERT trial findings.", "Early, well-coordinated MDT goal-setting involving the patient and family is associated with improved patient satisfaction and smoother transitions through the stroke care pathway."]}};
+</script>
+<script>
+const ICONS = {
+  lungs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 18a4 4 0 0 1 0-8h.5a5 5 0 0 1 9.7-1.5A4 4 0 1 1 18 18H6z"/></svg>',
+  list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>',
+  alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+  clipboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9zM9 11h6M9 15h6"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+  brain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 0 7 4.5v.5A2.5 2.5 0 0 0 4.5 7.5 2.5 2.5 0 0 0 3 12a2.5 2.5 0 0 0 2 4.5v.5A2.5 2.5 0 0 0 7.5 19.5 2.5 2.5 0 0 0 10 22h1V4.5A2.5 2.5 0 0 0 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 1 17 4.5v.5a2.5 2.5 0 0 1 2.5 2.5A2.5 2.5 0 0 1 21 12a2.5 2.5 0 0 1-2 4.5v.5a2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 14 22h-1V4.5A2.5 2.5 0 0 1 14.5 2z"/></svg>',
+  route: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M9 19h6.5a3.5 3.5 0 0 0 0-7h-8a3.5 3.5 0 0 1 0-7H15"/></svg>',
+  shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5z"/></svg>',
+  lightbulb: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M15.09 14c.18-1 .68-1.6 1.4-2.3A5.5 5.5 0 0 0 18 8 6 6 0 0 0 6 8a5.5 5.5 0 0 0 1.51 3.7c.72.7 1.22 1.3 1.4 2.3"/></svg>',
+  chevron: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>',
+  activity: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  flagch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22V4a1 1 0 0 1 1.4-.9l1 .5a5 5 0 0 0 4.2 0 5 5 0 0 1 4.8 0l1 .5A1 1 0 0 1 17 5v9a1 1 0 0 1-1.4.9l-1-.5a5 5 0 0 0-4.8 0 5 5 0 0 1-4.2 0"/></svg>',
+};
+
+const SECTIONS = [
+  {id:'home', title:'Overview', icon:'home', group:'main'},
+  {id:'overview', title:'Overall Approach', icon:'shield', group:'framework'},
+  {id:'pre_assessment', title:'Pre-Assessment Checks', icon:'eye', group:'framework'},
+  {id:'subjective', title:'Subjective Assessment', icon:'clipboard', group:'framework'},
+  {id:'objective', title:'Objective Assessment', icon:'search', group:'framework'},
+  {id:'clinical_impression', title:'Clinical Impression', icon:'brain', group:'framework'},
+  {id:'treatment', title:'Treatment Plan', icon:'route', group:'framework'},
+  {id:'safety_monitoring', title:'Safety & Monitoring', icon:'alert', group:'framework'},
+  {id:'pearls', title:'Clinical Pearls', icon:'lightbulb', group:'framework'},
+];
+
+function buildNav(){
+  const nav = document.getElementById('navTree');
+  let html = `<div class="nav-group"><a href="#home" class="nav-link" data-nav="home">${ICONS.home}Overview</a></div>`;
+  html += `<div class="nav-group"><div class="nav-group-title">Stroke Framework</div>`;
+  SECTIONS.filter(s=>s.group==='framework').forEach(s=>{
+    html += `<a href="#${s.id}" class="nav-link" data-nav="${s.id}">${ICONS[s.icon]}${s.title}</a>`;
+  });
+  html += `</div>`;
+  nav.innerHTML = html;
+}
+
+function setActiveNav(id){ document.querySelectorAll('.nav-link').forEach(a=>a.classList.toggle('active', a.dataset.nav===id)); }
+function renderList(items){ return `<ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul>`; }
+function card(title, items, iconKey){ return `<div class="card"><div class="card-title">${iconKey?ICONS[iconKey]:''}${title}</div>${renderList(items)}</div>`; }
+function callout(type, iconKey, title, items){ return `<div class="callout ${type}">${ICONS[iconKey]}<div><div class="callout-title">${title}</div>${renderList(items)}</div></div>`; }
+function accordion(title, bodyHtml, openFirst){
+  return `<div class="accordion${openFirst?' open':''}">
+    <button class="accordion-head" onclick="toggleAccordion(this)"><span>${title}</span>${ICONS.chevron}</button>
+    <div class="accordion-body" style="${openFirst?'max-height:2000px':''}"><div class="accordion-body-inner">${bodyHtml}</div></div>
+  </div>`;
+}
+function toggleAccordion(btn){
+  const acc = btn.closest('.accordion');
+  const body = acc.querySelector('.accordion-body');
+  const isOpen = acc.classList.contains('open');
+  if(isOpen){ acc.classList.remove('open'); body.style.maxHeight = 0; }
+  else{ acc.classList.add('open'); body.style.maxHeight = body.scrollHeight+40+'px'; }
+}
+
+function renderHome(){
+  document.getElementById('breadcrumb').innerHTML = `<b>Acute Stroke Assessment Guide</b>`;
+  setActiveNav('home');
+  let html = `<div class="hero-banner">
+    <h1>Acute Stroke Ward — Physiotherapy Assessment Guide</h1>
+    <p>An in-depth, evidence-based framework for assessing a newly admitted stroke patient on the acute ward — from pre-assessment safety checks and subjective history through neurological examination, clinical reasoning, treatment planning, and safety monitoring.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><b>8</b><span>Framework Sections</span></div>
+      <div class="hero-stat"><b>24h</b><span>Target MDT Assessment Window</span></div>
+      <div class="hero-stat"><b>AVERT</b><span>Early Mobilisation Evidence</span></div>
+    </div>
+  </div>`;
+  html += `<h2 style="font-size:1.15rem;margin-bottom:.9rem;">Jump to a section</h2><div class="grid-2">`;
+  SECTIONS.filter(s=>s.group==='framework').forEach(s=>{
+    html += `<button class="card" style="text-align:left;cursor:pointer" onclick="navigate('${s.id}')"><div class="card-title">${ICONS[s.icon]}${s.title}</div></button>`;
+  });
+  html += `</div>`;
+  document.getElementById('content').innerHTML = html;
+}
+
+function renderOverview(){
+  const d = STROKE_DATA.overview;
+  document.getElementById('breadcrumb').innerHTML = `<button class="nav-link" style="padding:.2rem .4rem" onclick="navigate('home')">Home</button> / <b>Overall Approach</b>`;
+  setActiveNav('overview');
+  let html = `<div class="page-title">1. Overall Approach</div>
+  <p class="page-sub">Priorities and clinical context for a newly admitted patient with an acute exacerbation of COPD (AECOPD), before any hands-on assessment begins.</p>`;
+  html += `<div class="section-block"><div class="section-heading"><span class="num">1</span>Physiotherapy Priorities</div>${card('Priorities on first contact', d.priorities, 'shield')}</div>`;
+  html += `<div class="section-block"><div class="section-heading"><span class="num">2</span>Understanding AECOPD</div>${card('Definition and classification', d.aecopd_definition, 'lungs')}</div>`;
+  document.getElementById('content').innerHTML = html;
+}
+
+function renderGeneric(key, title, num){
+  const d = STROKE_DATA[key];
+  document.getElementById('breadcrumb').innerHTML = `<button class="nav-link" style="padding:.2rem .4rem" onclick="navigate('home')">Home</button> / <b>${title}</b>`;
+  setActiveNav(key);
+  let html = `<div class="pill">Section ${num}</div><div class="page-title">${title}</div>`;
+  html += `<div style="margin-bottom:1.5rem">`;
+  Object.keys(d).forEach(k=>{
+    html += `<a class="toc-chip" onclick="scrollToSection(event,'sub-${slug(k)}')">${ICONS.chevron}${k}</a>`;
+  });
+  html += `</div>`;
+
+  let idx=1;
+  Object.entries(d).forEach(([k,v])=>{
+    html += `<div class="section-block" id="sub-${slug(k)}"><div class="section-heading"><span class="num">${idx}</span>${k}</div>`;
+    if(key==='safety_monitoring' && /stop or escalate/i.test(k)){
+      html += callout('red','alert', k, v);
+    } else if(key==='clinical_impression' && /risk/i.test(k)){
+      html += callout('yellow','flagch', k, v);
+    } else if(key==='subjective' && /red flag/i.test(k)){
+      html += callout('red','alert', k, v);
+    } else if(key==='pearls'){
+      const iconMap = {'Common mistakes':'alert','Key assessment tips':'eye','Important clinical signs':'flagch','Evidence-based recommendations':'lightbulb'};
+      const typeMap = {'Common mistakes':'blue','Key assessment tips':'green','Important clinical signs':'red','Evidence-based recommendations':'yellow'};
+      html += callout(typeMap[k]||'blue', iconMap[k]||'lightbulb', k, v);
+    } else {
+      html += card(k, v);
+    }
+    html += `</div>`;
+    idx++;
+  });
+  document.getElementById('content').innerHTML = html;
+}
+
+function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');}
+function scrollToSection(e,id){ e.preventDefault(); const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
+function navigate(id){ window.location.hash = id; }
+
+const SECTION_TITLES = {
+  pre_assessment:['Pre-Assessment Checks',2],
+  subjective:['Subjective Assessment',3],
+  objective:['Objective Assessment',4],
+  clinical_impression:['Clinical Impression & Problem List',5],
+  treatment:['Physiotherapy Treatment Plan',6],
+  safety_monitoring:['Safety, Monitoring & Documentation',7],
+  pearls:['Clinical Pearls',8],
+};
+
+function router(){
+  const hash = window.location.hash.replace('#','') || 'home';
+  window.scrollTo(0,0);
+  if(hash==='home'){ renderHome(); return; }
+  if(hash==='overview'){ renderOverview(); return; }
+  if(SECTION_TITLES[hash]){ renderGeneric(hash, SECTION_TITLES[hash][0], SECTION_TITLES[hash][1]); return; }
+  renderHome();
+}
+window.addEventListener('hashchange', router);
+
+function buildSearchIndex(){
+  const idx = [];
+  idx.push({id:'home', title:'Overview', section:'Home', text:'overview home dashboard aecopd'});
+  idx.push({id:'overview', title:'Overall Approach', section:'Section 1', text: JSON.stringify(STROKE_DATA.overview).toLowerCase()});
+  Object.keys(SECTION_TITLES).forEach(k=>{
+    idx.push({id:k, title:SECTION_TITLES[k][0], section:'Section '+SECTION_TITLES[k][1], text: JSON.stringify(STROKE_DATA[k]).toLowerCase()});
+  });
+  return idx;
+}
+let searchIndex = [];
+
+document.getElementById('searchInput').addEventListener('input', function(e){
+  const q = e.target.value.trim().toLowerCase();
+  const nav = document.getElementById('navTree');
+  if(!q){ buildNav(); return; }
+  const results = searchIndex.filter(r => r.text.includes(q) || r.title.toLowerCase().includes(q));
+  let html = `<div class="nav-group-title">Results (${results.length})</div>`;
+  if(results.length===0){ html += `<div class="search-empty">No matches for "${q}"</div>`; }
+  results.forEach(r=>{
+    html += `<a href="#${r.id}" class="nav-link" data-nav="${r.id}">${ICONS.search}<span>${r.title}<br><span style="font-size:.72rem;color:var(--color-text-faint)">${r.section}</span></span></a>`;
+  });
+  nav.innerHTML = html;
+});
+
+document.getElementById('sidebarToggle').addEventListener('click', ()=>{
+  const sb = document.getElementById('sidebar');
+  if(window.innerWidth<=900){ sb.classList.toggle('open'); }
+  else{ sb.classList.toggle('collapsed'); }
+});
+
+(function(){
+  const toggle = document.getElementById('themeToggle');
+  const root = document.documentElement;
+  let dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  root.setAttribute('data-theme', dark?'dark':'light');
+  toggle.addEventListener('click', ()=>{
+    dark = !dark;
+    root.setAttribute('data-theme', dark?'dark':'light');
+    toggle.innerHTML = dark
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  });
+})();
+
+buildNav();
+searchIndex = buildSearchIndex();
+router();
+</script>
+</body>
+</html>

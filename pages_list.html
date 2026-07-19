@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0f1722" />
+<title>Clinical Document Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0b1019;
+    --bg-2: #0f1722;
+    --surface: #16202e;
+    --surface-2: #1c2837;
+    --line: #27374b;
+    --line-soft: #1f2c3d;
+    --text: #e8eef6;
+    --text-dim: #9fb0c4;
+    --text-faint: #6b7d93;
+    
+    /* Document Specific Accents */
+    --accent-blue: #3b82f6;
+    --accent-teal: #14b8a6;
+    --accent-amber: #f59e0b;
+    --accent-purple: #a855f7;
+    --accent-red: #ef4444;
+
+    --radius: 16px;
+    --radius-sm: 11px;
+    --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  /* Header styles */
+  header {
+    background: linear-gradient(180deg, var(--bg-2) 0%, rgba(15, 23, 34, 0.9) 80%, rgba(11, 16, 25, 0) 100%);
+    padding: calc(var(--safe-top) + 20px) 24px 30px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(39, 55, 75, 0.3);
+  }
+
+  .header-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-blue);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .logo-title h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    background: linear-gradient(135deg, var(--text) 0%, var(--text-dim) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .logo-title p {
+    margin: 2px 0 0 0;
+    font-size: 12px;
+    color: var(--text-faint);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .logo-title .status-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--accent-teal);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent-teal);
+    display: inline-block;
+  }
+
+  .btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text-dim);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-logout:hover {
+    color: var(--accent-red);
+    border-color: rgba(239, 68, 68, 0.4);
+    background: rgba(239, 68, 68, 0.05);
+    transform: translateY(-1px);
+  }
+
+  .btn-logout svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    transition: transform 0.2s;
+  }
+
+  .btn-logout:hover svg {
+    transform: translateX(2px);
+  }
+
+  /* Main Container */
+  main {
+    flex: 1;
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px 24px 80px;
+  }
+
+  /* Controls and search */
+  .control-panel {
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  @media (min-width: 640px) {
+    .control-panel {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .search-wrapper {
+    position: relative;
+    flex: 1;
+    max-width: 480px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 14px 16px 14px 44px;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: 14px;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .search-input:focus {
+    border-color: var(--accent-blue);
+    background: var(--surface-2);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-faint);
+    pointer-events: none;
+    width: 18px;
+    height: 18px;
+  }
+
+  .search-input:focus + .search-icon {
+    color: var(--accent-blue);
+  }
+
+  .meta-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .stat-badge {
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  /* Document Grid */
+  .doc-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  @media (min-width: 640px) {
+    .doc-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .doc-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Document Card */
+  .doc-card {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .doc-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--accent-color, var(--accent-blue));
+    opacity: 0.8;
+  }
+
+  .doc-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--line);
+    box-shadow: var(--shadow);
+    background: var(--surface-2);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .doc-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-color, var(--accent-blue));
+    background: rgba(var(--accent-color-rgb, 59, 130, 246), 0.1);
+    border: 1px solid rgba(var(--accent-color-rgb, 59, 130, 246), 0.2);
+    transition: transform 0.3s ease;
+  }
+
+  .doc-card:hover .doc-icon-box {
+    transform: scale(1.08) rotate(2deg);
+  }
+
+  .doc-icon-box svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+    fill: none;
+  }
+
+  .badge-locked {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent-teal);
+    background: rgba(20, 184, 166, 0.1);
+    padding: 4px 8px;
+    border-radius: 99px;
+    border: 1px solid rgba(20, 184, 166, 0.2);
+  }
+
+  .badge-locked svg {
+    width: 10px;
+    height: 10px;
+    fill: currentColor;
+  }
+
+  .doc-title {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 8px 0;
+    color: var(--text);
+    letter-spacing: -0.2px;
+  }
+
+  .doc-meta {
+    font-size: 13px;
+    color: var(--text-faint);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .meta-dot {
+    width: 4px;
+    height: 4px;
+    background-color: var(--line);
+    border-radius: 50%;
+  }
+
+  .card-action {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--accent-color, var(--accent-blue));
+    padding-top: 16px;
+    border-top: 1px solid rgba(39, 55, 75, 0.2);
+  }
+
+  .card-action .btn-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .card-action svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .doc-card:hover .card-action svg {
+    transform: translateX(4px) translateY(-1px);
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 60px 40px;
+    background: var(--surface);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    max-width: 500px;
+    margin: 40px auto;
+  }
+
+  .empty-state svg {
+    width: 48px;
+    height: 48px;
+    color: var(--text-faint);
+    margin-bottom: 16px;
+  }
+
+  .empty-state h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: var(--text);
+  }
+
+  .empty-state p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-faint);
+    line-height: 1.5;
+  }
+
+  /* Loading state */
+  .shimmer-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  @media (min-width: 640px) {
+    .shimmer-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 900px) {
+    .shimmer-container {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .shimmer-card {
+    height: 195px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line-soft);
+  }
+
+  .shimmer-card::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.03) 20%,
+      rgba(255, 255, 255, 0.06) 60%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 2s infinite;
+    content: '';
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Footer */
+  footer {
+    padding: 30px 24px;
+    text-align: center;
+    border-top: 1px solid var(--line-soft);
+    font-size: 12px;
+    color: var(--text-faint);
+    background: var(--bg-2);
+  }
+
+  .footer-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  @media (min-width: 640px) {
+    .footer-content {
+      flex-direction: row;
+    }
+  }
+
+  .footer-shield {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  .footer-shield svg {
+    width: 14px;
+    height: 14px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="logo-area">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <path d="M12 8v8M9 12h6" />
+        </svg>
+      </div>
+      <div class="logo-title">
+        <h1>Clinical Vault</h1>
+        <p><span class="status-dot"></span> Protected Reference Hub</p>
+      </div>
+    </div>
+    <button class="btn-logout" id="logoutBtn">
+      <span>Logout</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="control-panel">
+    <div class="search-wrapper">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search clinical pages..." autocomplete="off" />
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+    </div>
+    <div class="meta-stats">
+      <div class="stat-badge" id="pagesCountBadge">0 Documents</div>
+      <div class="stat-badge" style="color: var(--accent-teal); border-color: rgba(20, 184, 166, 0.2); background: rgba(20, 184, 166, 0.03);">
+        Session Encrypted
+      </div>
+    </div>
+  </div>
+
+  <div class="shimmer-container" id="loadingState">
+    <div class="shimmer-card"></div>
+    <div class="shimmer-card"></div>
+    <div class="shimmer-card"></div>
+  </div>
+
+  <div class="doc-grid" id="docGrid" style="display: none;"></div>
+
+  <div class="empty-state" id="emptyState" style="display: none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+    <h3>No documents found</h3>
+    <p>We couldn't find any documents matching your search. Please double check your spelling or search terms.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <div class="footer-shield">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </svg>
+      <span>Secure Endpoint Protection Active</span>
+    </div>
+    <div>My Ledger &middot; Clinical Reference Vault &copy; 2026</div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  "use strict";
+
+  const AUTH_TOKEN_KEY = "myLedger.v1.auth_token";
+  const authToken = localStorage.getItem(AUTH_TOKEN_KEY);
+
+  if (!authToken) {
+    window.location.href = "/";
+    return;
+  }
+
+  const searchInput = document.getElementById("searchInput");
+  const docGrid = document.getElementById("docGrid");
+  const loadingState = document.getElementById("loadingState");
+  const emptyState = document.getElementById("emptyState");
+  const pagesCountBadge = document.getElementById("pagesCountBadge");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  let allPages = [];
+
+  function formatBytes(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  }
+
+  function formatTitle(name) {
+    let title = name.replace(/\.html$/i, "");
+    title = title.replace(/[_-]+/g, " ");
+    return title.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+  }
+
+  function getDocTheme(name) {
+    const n = name.toLowerCase();
+    if (n.includes("msk")) {
+      return {
+        color: "var(--accent-amber)",
+        rgb: "245, 158, 11",
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8M8 21h8M12 3v18M5 12h14"/><circle cx="12" cy="7" r="2.5"/><circle cx="12" cy="17" r="2.5"/><circle cx="7" cy="12" r="2"/><circle cx="17" cy="12" r="2"/></svg>`
+      };
+    } else if (n.includes("respiratory")) {
+      return {
+        color: "var(--accent-teal)",
+        rgb: "20, 184, 166",
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-1 0-2 .8-2 2v6c0 1.2.8 2 2 2s2-.8 2-2V5c0-1.2-.8-2-2-2zM4 14c0-2.8 2.2-5 5-5h1M20 14c0-2.8-2.2-5-5-5h-1"/><path d="M9 9v11a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V9"/></svg>`
+      };
+    } else if (n.includes("stroke")) {
+      return {
+        color: "var(--accent-purple)",
+        rgb: "168, 85, 247",
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-3.8 0-7 3.2-7 7 0 1.8.7 3.5 1.9 4.8-.4.7-.9 1.5-1.2 2.4A4.5 4.5 0 0 0 8.5 22c1.7 0 3.2-1 4-2.5.8 1.5 2.3 2.5 4 2.5a4.5 4.5 0 0 0 2.8-5.8 12 12 0 0 0-1.2-2.4c1.2-1.3 1.9-3 1.9-4.8 0-3.8-3.2-7-7-7z"/><path d="M12 6v10" stroke-width="1.5" stroke-dasharray="2 2"/></svg>`
+      };
+    } else {
+      return {
+        color: "var(--accent-blue)",
+        rgb: "59, 130, 246",
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`
+      };
+    }
+  }
+
+  function renderPages(pages) {
+    if (pages.length === 0) {
+      docGrid.style.display = "none";
+      emptyState.style.display = "block";
+      pagesCountBadge.textContent = "0 Documents";
+      return;
+    }
+
+    emptyState.style.display = "none";
+    docGrid.style.display = "grid";
+    pagesCountBadge.textContent = pages.length + (pages.length === 1 ? " Document" : " Documents");
+
+    docGrid.innerHTML = pages.map(page => {
+      const theme = getDocTheme(page.name);
+      const title = formatTitle(page.name);
+      const sizeStr = formatBytes(page.size);
+      
+      return `
+        <a href="/pages/${page.name}" target="_blank" class="doc-card" style="--accent-color: ${theme.color}; --accent-color-rgb: ${theme.rgb}">
+          <div class="card-top">
+            <div class="doc-icon-box">
+              ${theme.icon}
+            </div>
+            <div class="badge-locked">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/>
+              </svg>
+              <span>SECURE</span>
+            </div>
+          </div>
+          <h2 class="doc-title">${title}</h2>
+          <div class="doc-meta">
+            <span>HTML Document</span>
+            <div class="meta-dot"></div>
+            <span>${sizeStr}</span>
+          </div>
+          <div class="card-action">
+            <span class="btn-text">Open Document</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"></line>
+              <polyline points="7 7 17 7 17 17"></polyline>
+            </svg>
+          </div>
+        </a>
+      `;
+    }).join("");
+  }
+
+  async function loadPages() {
+    try {
+      const response = await fetch("/api/pages", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${authToken}`
+        }
+      });
+      if (response.status === 401) {
+        logOut();
+        return;
+      }
+      if (!response.ok) {
+        throw new Error("Failed to load documents");
+      }
+      const data = await response.json();
+      allPages = data.pages || [];
+      loadingState.style.display = "none";
+      renderPages(allPages);
+    } catch (error) {
+      console.error(error);
+      loadingState.style.display = "none";
+      pagesCountBadge.textContent = "Error";
+      docGrid.innerHTML = `
+        <div class="empty-state" style="max-width:100%; width: 100%; grid-column: 1/-1;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <h3>Connection Error</h3>
+          <p>Failed to retrieve documents from the server. Check your connection or login status.</p>
+        </div>
+      `;
+      docGrid.style.display = "block";
+    }
+  }
+
+  searchInput.addEventListener("input", (e) => {
+    const term = e.target.value.toLowerCase().trim();
+    if (!term) {
+      renderPages(allPages);
+      return;
+    }
+    const filtered = allPages.filter(p => {
+      const displayTitle = formatTitle(p.name).toLowerCase();
+      return p.name.toLowerCase().includes(term) || displayTitle.includes(term);
+    });
+    renderPages(filtered);
+  });
+
+  async function logOut() {
+    try {
+      await fetch("/api/logout", { 
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${authToken}`
+        }
+      });
+    } catch (e) {}
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    window.location.href = "/";
+  }
+
+  logoutBtn.addEventListener("click", () => {
+    if (confirm("Are you sure you want to logout of this secure session?")) {
+      logOut();
+    }
+  });
+
+  loadPages();
+})();
+</script>
+</body>
+</html>
